@@ -1,0 +1,65 @@
+const express = require('express');
+const cors = require('cors');
+const helmet = require('helmet');
+const morgan = require('morgan');
+
+const { apiLimiter } = require('./middleware/rateLimiter');
+const errorHandler = require('./middleware/errorHandler');
+const { getHealth } = require('./controllers/dashboardController');
+
+// ── Route imports ─────────────────────────────────────────────────────────────
+const authRoutes = require('./routes/authRoutes');
+const studentRoutes = require('./routes/studentRoutes');
+const homeworkRoutes = require('./routes/homeworkRoutes');
+const submissionRoutes = require('./routes/submissionRoutes');
+const correctionRoutes = require('./routes/correctionRoutes');
+const dashboardRoutes = require('./routes/dashboardRoutes');
+
+const app = express();
+
+// ── Security headers ──────────────────────────────────────────────────────────
+app.use(helmet());
+
+// ── CORS ──────────────────────────────────────────────────────────────────────
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL || 'http://localhost:5173',
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  })
+);
+
+// ── Request logging ───────────────────────────────────────────────────────────
+if (process.env.NODE_ENV !== 'test') {
+  app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
+}
+
+// ── Body parsers ──────────────────────────────────────────────────────────────
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: false, limit: '10mb' }));
+
+// ── Global rate limiter ───────────────────────────────────────────────────────
+app.use('/api', apiLimiter);
+
+// ── Health check (no auth required) ──────────────────────────────────────────
+app.get('/api/health', getHealth);
+
+
+// ── API Routes ────────────────────────────────────────────────────────────────
+app.use('/api/auth', authRoutes);
+app.use('/api/students', studentRoutes);
+app.use('/api/homework', homeworkRoutes);
+app.use('/api/submissions', submissionRoutes);
+app.use('/api/corrections', correctionRoutes);
+app.use('/api/dashboard', dashboardRoutes);
+
+// ── 404 handler ───────────────────────────────────────────────────────────────
+app.use((_req, res) => {
+  res.status(404).json({ success: false, message: 'Route not found' });
+});
+
+// ── Global error handler (must be last) ──────────────────────────────────────
+app.use(errorHandler);
+
+module.exports = app;

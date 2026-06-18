@@ -1,0 +1,54 @@
+.page {
+  min-height: 100vh; display: flex; align-items: center; justify-content: center;
+  padding: 24px; position: relative; overflow: hidden; background: var(--bg-primary);
+}
+.bg {
+  position: absolute; inset: 0; display: grid; grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: repeat(8, 1fr); pointer-events: none;
+}
+.cell { background: var(--text-primary); }
+
+.card {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-xl);
+  padding: 40px; width: 100%; max-width: 420px; position: relative; z-index: 1;
+  box-shadow: var(--shadow-lg); animation: slideUp 0.3s ease;
+}
+@keyframes slideUp { from { transform: translateY(24px); opacity: 0 } to { transform: translateY(0); opacity: 1 } }
+
+.logo { display: flex; align-items: center; gap: 14px; margin-bottom: 24px; }
+.logoIcon { font-size: 36px; line-height: 1; }
+.logoName { font-size: 22px; font-weight: 800; color: var(--text-primary); letter-spacing: -0.03em; }
+.logoSub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+.divider { height: 1px; background: var(--border); margin-bottom: 24px; }
+
+.title { font-size: 20px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+.subtitle { font-size: 14px; color: var(--text-secondary); margin-bottom: 24px; }
+
+.errorBanner {
+  background: var(--red-dim); border: 1px solid rgba(239,68,68,0.3); border-radius: var(--radius);
+  padding: 10px 14px; font-size: 13px; color: var(--red); margin-bottom: 16px;
+  display: flex; align-items: center; gap: 8px;
+}
+
+.form { display: flex; flex-direction: column; gap: 16px; }
+
+.passWrap { position: relative; }
+.eyeBtn {
+  position: absolute; right: 12px; bottom: 11px; background: none; border: none;
+  color: var(--text-muted); cursor: pointer; display: flex; padding: 2px;
+  transition: color var(--transition);
+}
+.eyeBtn:hover { color: var(--text-primary); }
+
+.demo { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border); }
+.demoTitle { font-size: 12px; color: var(--text-muted); margin-bottom: 10px; text-align: center; }
+.demoGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.demoBtn {
+  background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 10px 12px; cursor: pointer; text-align: left; transition: border-color var(--transition);
+  display: flex; flex-direction: column; gap: 3px; font-family: inherit;
+}
+.demoBtn:hover { border-color: var(--accent); }
+.demoRole { font-size: 12px; font-weight: 600; color: var(--text-secondary); }
+.demoBtn span:last-child { font-size: 11px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; }

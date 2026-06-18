@@ -1,0 +1,40 @@
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  font-family: inherit; font-weight: 600; border: none; cursor: pointer;
+  border-radius: var(--radius); transition: all var(--transition);
+  white-space: nowrap; position: relative; letter-spacing: 0.01em;
+}
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.full { width: 100%; }
+
+/* Sizes */
+.sm { padding: 6px 14px; font-size: 13px; }
+.md { padding: 10px 20px; font-size: 14px; }
+.lg { padding: 13px 28px; font-size: 15px; }
+
+/* Variants */
+.primary { background: var(--accent); color: #fff; }
+.primary:hover:not(:disabled) { background: var(--accent-hover); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(79,142,247,0.35); }
+
+.secondary { background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border); }
+.secondary:hover:not(:disabled) { background: var(--bg-card-hover); border-color: var(--accent); }
+
+.ghost { background: transparent; color: var(--text-secondary); border: 1px solid transparent; }
+.ghost:hover:not(:disabled) { background: var(--bg-card); color: var(--text-primary); border-color: var(--border); }
+
+.danger { background: var(--red-dim); color: var(--red); border: 1px solid var(--red); }
+.danger:hover:not(:disabled) { background: var(--red); color: #fff; }
+
+.success { background: var(--green-dim); color: var(--green); border: 1px solid var(--green); }
+.success:hover:not(:disabled) { background: var(--green); color: #fff; }
+
+/* Spinner */
+.spinner {
+  width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff; border-radius: 50%;
+  animation: spin 0.7s linear infinite; flex-shrink: 0;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.iconLeft, .iconRight { display: flex; align-items: center; flex-shrink: 0; }
+.iconLeft svg, .iconRight svg { width: 16px; height: 16px; }

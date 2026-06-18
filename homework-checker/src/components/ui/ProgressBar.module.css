@@ -1,0 +1,11 @@
+.wrapper { width: 100%; }
+.meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.label { font-size: 12px; color: var(--text-secondary); }
+.pct { font-size: 12px; font-weight: 600; color: var(--text-primary); }
+.track { width: 100%; background: var(--bg-input); border-radius: 999px; overflow: hidden; }
+.fill { height: 100%; border-radius: 999px; transition: width 0.4s ease; }
+.blue { background: linear-gradient(90deg, var(--accent), #6b9ff8); }
+.green { background: linear-gradient(90deg, #16a34a, var(--green)); }
+.yellow { background: linear-gradient(90deg, #d97706, var(--yellow)); }
+.red { background: linear-gradient(90deg, #b91c1c, var(--red)); }
+.purple { background: linear-gradient(90deg, #7c3aed, var(--purple)); }

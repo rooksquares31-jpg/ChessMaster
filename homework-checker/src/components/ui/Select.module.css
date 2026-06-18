@@ -1,0 +1,17 @@
+.wrapper { display: flex; flex-direction: column; gap: 6px; }
+.label { font-size: 13px; font-weight: 500; color: var(--text-secondary); }
+.required { color: var(--red); margin-left: 3px; }
+.select {
+  width: 100%; background: var(--bg-input); border: 1px solid var(--border);
+  border-radius: var(--radius); color: var(--text-primary); font-family: inherit;
+  font-size: 14px; padding: 10px 14px; outline: none; cursor: pointer;
+  transition: border-color var(--transition);
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238b90a7' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 12px center;
+  padding-right: 36px;
+}
+.select:focus { border-color: var(--border-focus); box-shadow: 0 0 0 3px var(--accent-dim); }
+.select option { background: var(--bg-card); }
+.errored { border-color: var(--red); }
+.error { font-size: 12px; color: var(--red); }

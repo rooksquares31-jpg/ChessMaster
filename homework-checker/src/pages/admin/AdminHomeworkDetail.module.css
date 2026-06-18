@@ -1,0 +1,119 @@
+/* ── Page shell ── */
+.page { display: flex; flex-direction: column; gap: 24px; max-width: 1000px; }
+
+/* ── Loading / not found ── */
+.loadingWrap { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 80px; color: var(--text-muted); font-size: 15px; }
+.spinner { width: 20px; height: 20px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.notFound { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 80px; text-align: center; color: var(--text-muted); }
+.notFound h3 { font-size: 18px; font-weight: 700; color: var(--text-primary); }
+
+/* ── Header ── */
+.header { display: flex; flex-direction: column; gap: 16px; }
+.backBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  padding: 0;
+  transition: color var(--transition);
+  width: fit-content;
+}
+.backBtn:hover { color: var(--text-primary); }
+
+.hwMeta { }
+.title { font-size: 26px; font-weight: 800; color: var(--text-primary); letter-spacing: -0.02em; margin-bottom: 6px; }
+.subtitle { font-size: 14px; color: var(--text-secondary); margin-bottom: 12px; line-height: 1.5; }
+.metaBadges { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.dueDate { display: flex; align-items: center; gap: 5px; font-size: 13px; color: var(--text-muted); }
+
+/* ── Stats strip ── */
+.statsStrip {
+  display: flex;
+  align-items: center;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px 28px;
+}
+.statItem { display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; }
+.statNum { font-size: 28px; font-weight: 800; line-height: 1; }
+.statLbl { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+.statDiv { width: 1px; background: var(--border); height: 40px; margin: 0 8px; }
+
+/* ── Section ── */
+.section { display: flex; flex-direction: column; gap: 12px; }
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-secondary);
+}
+.sectionTitle { font-size: 15px; font-weight: 700; color: var(--text-primary); flex: 1; }
+.sectionCount {
+  background: var(--accent-dim);
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.subsLoading { font-size: 13px; color: var(--text-muted); padding: 8px 0; }
+.empty { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 40px; text-align: center; color: var(--text-muted); font-size: 14px; }
+
+/* ── Student list ── */
+.studentList { display: flex; flex-direction: column; gap: 8px; }
+
+.studentRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: border-color var(--transition), box-shadow var(--transition);
+  padding-right: 16px;
+}
+.studentRow:hover { border-color: var(--border-focus); box-shadow: var(--shadow); }
+
+.studentStrip { width: 4px; height: 100%; min-height: 64px; flex-shrink: 0; align-self: stretch; }
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.studentInfo { flex: 1; min-width: 0; padding: 14px 0; }
+.studentName { font-size: 14px; font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.studentEmail { font-size: 12px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
+
+.scoreChip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--green);
+  background: var(--green-dim);
+  border: 1px solid rgba(34, 197, 94, 0.25);
+  padding: 5px 10px;
+  border-radius: var(--radius);
+  flex-shrink: 0;
+}
+.gradeChip { font-weight: 800; }

@@ -1,0 +1,67 @@
+.page { display: flex; flex-direction: column; gap: 24px; max-width: 1200px; }
+.header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.title { font-size: 26px; font-weight: 800; color: var(--text-primary); letter-spacing: -0.02em; }
+.subtitle { font-size: 14px; color: var(--text-secondary); margin-top: 4px; }
+.loading { padding: 60px; text-align: center; color: var(--text-muted); }
+.empty { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 60px; text-align: center; color: var(--text-muted); }
+.empty h3 { font-size: 18px; font-weight: 700; color: var(--text-primary); }
+.empty p { font-size: 14px; }
+
+.table { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+.tableHead { display: grid; grid-template-columns: 2fr 1fr 1fr 80px 130px 100px 72px; gap: 16px; padding: 12px 20px; background: var(--bg-secondary); font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; align-items: center; }
+.tableRow { display: grid; grid-template-columns: 2fr 1fr 1fr 80px 130px 100px 72px; gap: 16px; padding: 14px 20px; align-items: center; border-top: 1px solid var(--border); cursor: pointer; transition: background var(--transition); }
+.tableRow:hover { background: var(--bg-card-hover); }
+.hwName { }
+.hwTitle { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+.hwDesc { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.hwStudents, .hwDate { display: flex; align-items: center; gap: 5px; font-size: 13px; color: var(--text-secondary); }
+
+/* Row right: delete + chevron */
+.rowRight { display: flex; align-items: center; gap: 4px; justify-content: flex-end; }
+.rowChevron { color: var(--text-muted); transition: color var(--transition); }
+.tableRow:hover .rowChevron { color: var(--accent); }
+
+/* Delete button */
+.deleteBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  background: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.deleteBtn:hover {
+  background: var(--red-dim);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: var(--red);
+}
+
+/* Confirm modal */
+.confirmBody {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 8px 0;
+  text-align: center;
+}
+.confirmIcon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--red-dim);
+  border: 2px solid rgba(239, 68, 68, 0.3);
+  color: var(--red);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.confirmTitle { font-size: 15px; font-weight: 600; color: var(--text-primary); line-height: 1.4; }
+.confirmSub { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+.confirmActions { display: flex; gap: 10px; width: 100%; justify-content: center; flex-wrap: wrap; margin-top: 4px; }
+

@@ -1,0 +1,28 @@
+.page { display: flex; flex-direction: column; gap: 28px; max-width: 1100px; }
+.header { }
+.title { font-size: 26px; font-weight: 800; color: var(--text-primary); letter-spacing: -0.02em; }
+.subtitle { font-size: 14px; color: var(--text-secondary); margin-top: 4px; }
+.statsGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; }
+.statCard { display: flex; flex-direction: column; gap: 10px; padding: 20px; }
+.statIcon { width: 40px; height: 40px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center; }
+.statVal { font-size: 28px; font-weight: 800; color: var(--text-primary); line-height: 1; }
+.statLbl { font-size: 13px; color: var(--text-secondary); }
+.mainRow { display: grid; grid-template-columns: 360px 1fr; gap: 20px; }
+@media (max-width: 900px) { .mainRow { grid-template-columns: 1fr; } }
+.progressCard { }
+.cardTitle { font-size: 15px; font-weight: 700; color: var(--text-primary); margin-bottom: 16px; }
+.bigProgress { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+.progressCircleWrap { position: relative; flex-shrink: 0; }
+.progressCircleText { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.progressPct { font-size: 26px; font-weight: 800; color: var(--text-primary); }
+.progressSub { font-size: 12px; color: var(--text-muted); }
+.progressDetails { flex: 1; display: flex; flex-direction: column; gap: 14px; min-width: 150px; }
+.hwHeader { display: flex; align-items: center; justify-content: space-between; }
+.hwList { display: flex; flex-direction: column; gap: 2px; }
+.hwRow { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 8px; border-radius: var(--radius); cursor: pointer; transition: background var(--transition); }
+.hwRow:hover { background: var(--bg-card-hover); }
+.hwInfo { flex: 1; }
+.hwTitle { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+.hwMeta { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+.hwDue { font-size: 12px; color: var(--text-muted); }
+.empty { padding: 30px; text-align: center; color: var(--text-muted); font-size: 14px; }
