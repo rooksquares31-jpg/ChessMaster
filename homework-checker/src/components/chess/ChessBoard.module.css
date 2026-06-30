@@ -1,1 +1,194 @@
-.wrapper { display: inline-block; border-radius: 8px; overflow: hidden; }
+/* ════════════════════════════════════════════════════════════════
+   Normal board wrapper
+════════════════════════════════════════════════════════════════ */
+.boardOuterContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  max-width: 100%;
+}
+
+.fsBtnExternal {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: all var(--transition);
+  align-self: flex-end; /* Align to the right side below the board */
+}
+
+.fsBtnExternal:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--bg-card-hover);
+}
+
+.wrapper {
+  display: inline-block;
+  position: relative;
+  flex-shrink: 0;        /* never compress the board */
+  max-width: 100%;
+  /* overflow visible so the fullscreen button can peek out */
+  overflow: visible;
+}
+
+/* ── Fullscreen button — appears on hover ── */
+.fsBtn {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  z-index: 20;
+  background: rgba(8, 10, 16, 0.82);
+  border: 2px solid rgba(79, 142, 247, 0.55);
+  border-radius: 8px;
+  color: #a8c4ff;
+  cursor: pointer;
+  padding: 7px 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+
+  /* Hidden until hover */
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.18s ease, transform 0.18s ease, background 0.18s ease;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 3px 12px rgba(0,0,0,0.5);
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+}
+.wrapper:hover .fsBtn,
+.wrapper:focus-within .fsBtn {
+  opacity: 1;
+  transform: translateY(0);
+}
+.fsBtn:hover {
+  background: rgba(79, 142, 247, 0.28);
+  color: #fff;
+  border-color: rgba(79, 142, 247, 0.9);
+}
+
+/* ════════════════════════════════════════════════════════════════
+   FULLSCREEN OVERLAY
+   - Covers the entire viewport
+   - Board is properly centred with padding
+   - Clicking the dark area closes it
+   - Board itself never overflows the screen
+════════════════════════════════════════════════════════════════ */
+.fsOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+
+  background: rgba(0, 0, 0, 0.92);
+  backdrop-filter: blur(12px);
+
+  /* Centre the board perfectly */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* Enough padding so nothing touches the screen edge */
+  padding: 60px 20px 20px;   /* top: 60px clears the close button */
+
+  cursor: pointer;            /* click outside → exit */
+  animation: fsOverlayIn 0.2s ease;
+}
+@keyframes fsOverlayIn { from { opacity: 0 } to { opacity: 1 } }
+
+/* Inner container — stops click propagation, holds board + hint */
+.fsInner {
+  position: relative;
+  cursor: default;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  animation: fsBoardIn 0.24s cubic-bezier(0.34, 1.46, 0.64, 1);
+}
+@keyframes fsBoardIn {
+  from { transform: scale(0.86); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+
+/* Board wrapper in fullscreen — prevents internal overflow */
+.fsBoardWrap {
+  flex-shrink: 0;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+/* ── ✕ Close button — always visible top-right ── */
+.fsClose {
+  position: absolute;
+  top: -20px;
+  right: -20px;
+  z-index: 10;
+
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+
+  background: #dc2626;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  color: #fff;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  transition: background 0.15s, transform 0.15s;
+}
+.fsClose:hover { background: #ef4444; transform: scale(1.12); }
+
+/* ── Exit hint ── */
+.fsHint {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.38);
+  text-align: center;
+  pointer-events: none;
+  max-width: 380px;
+  line-height: 1.5;
+  margin: 0;
+}
+.fsHint kbd {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 4px;
+  padding: 1px 7px;
+  font-family: inherit;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+/* ════════════════════════════════════════════════════════════════
+   MOBILE
+════════════════════════════════════════════════════════════════ */
+@media (max-width: 600px) {
+  .wrapper {
+    width: 100% !important;
+    height: auto !important;
+  }
+
+  /* Less padding on small phones */
+  .fsOverlay { padding: 52px 8px 8px; }
+
+  .fsClose { top: -14px; right: -14px; width: 32px; height: 32px; }
+  .fsClose svg { width: 15px; height: 15px; }
+
+  .fsHint { font-size: 10px; }
+}

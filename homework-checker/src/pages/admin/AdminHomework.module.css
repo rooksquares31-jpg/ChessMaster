@@ -7,61 +7,68 @@
 .empty h3 { font-size: 18px; font-weight: 700; color: var(--text-primary); }
 .empty p { font-size: 14px; }
 
+/* ── Table — RESPONSIVE ── */
 .table { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
-.tableHead { display: grid; grid-template-columns: 2fr 1fr 1fr 80px 130px 100px 72px; gap: 16px; padding: 12px 20px; background: var(--bg-secondary); font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; align-items: center; }
-.tableRow { display: grid; grid-template-columns: 2fr 1fr 1fr 80px 130px 100px 72px; gap: 16px; padding: 14px 20px; align-items: center; border-top: 1px solid var(--border); cursor: pointer; transition: background var(--transition); }
-.tableRow:hover { background: var(--bg-card-hover); }
-.hwName { }
-.hwTitle { font-size: 14px; font-weight: 600; color: var(--text-primary); }
-.hwDesc { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
-.hwStudents, .hwDate { display: flex; align-items: center; gap: 5px; font-size: 13px; color: var(--text-secondary); }
 
-/* Row right: delete + chevron */
+/* Desktop: 7-col grid */
+.tableHead {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 80px 130px 100px 72px;
+  gap: 12px; padding: 12px 20px;
+  background: var(--bg-secondary); font-size: 11px; font-weight: 700;
+  color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em;
+  align-items: center;
+}
+.tableRow {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 80px 130px 100px 72px;
+  gap: 12px; padding: 14px 20px; align-items: center;
+  border-top: 1px solid var(--border); cursor: pointer;
+  transition: background var(--transition);
+}
+.tableRow:hover { background: var(--bg-card-hover); }
+.hwName { min-width: 0; }
+.hwTitle { font-size: 14px; font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hwDesc { font-size: 12px; color: var(--text-muted); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hwStudents, .hwDate { display: flex; align-items: center; gap: 5px; font-size: 13px; color: var(--text-secondary); }
 .rowRight { display: flex; align-items: center; gap: 4px; justify-content: flex-end; }
 .rowChevron { color: var(--text-muted); transition: color var(--transition); }
 .tableRow:hover .rowChevron { color: var(--accent); }
-
-/* Delete button */
-.deleteBtn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-sm);
-  border: 1px solid transparent;
-  background: none;
-  color: var(--text-muted);
-  cursor: pointer;
-  transition: all var(--transition);
-}
-.deleteBtn:hover {
-  background: var(--red-dim);
-  border-color: rgba(239, 68, 68, 0.3);
-  color: var(--red);
-}
+.deleteBtn { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: var(--radius-sm); border: 1px solid transparent; background: none; color: var(--text-muted); cursor: pointer; transition: all var(--transition); }
+.deleteBtn:hover { background: var(--red-dim); border-color: rgba(239,68,68,0.3); color: var(--red); }
 
 /* Confirm modal */
-.confirmBody {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 14px;
-  padding: 8px 0;
-  text-align: center;
-}
-.confirmIcon {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background: var(--red-dim);
-  border: 2px solid rgba(239, 68, 68, 0.3);
-  color: var(--red);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+.confirmBody { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 8px 0; text-align: center; }
+.confirmIcon { width: 64px; height: 64px; border-radius: 50%; background: var(--red-dim); border: 2px solid rgba(239,68,68,0.3); color: var(--red); display: flex; align-items: center; justify-content: center; }
 .confirmTitle { font-size: 15px; font-weight: 600; color: var(--text-primary); line-height: 1.4; }
 .confirmSub { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
 .confirmActions { display: flex; gap: 10px; width: 100%; justify-content: center; flex-wrap: wrap; margin-top: 4px; }
 
+/* ── Tablet: hide less important columns ── */
+@media (max-width: 900px) {
+  .tableHead,
+  .tableRow {
+    grid-template-columns: 2fr 1fr 100px 50px;
+  }
+  /* hide difficulty, students, date columns */
+  .tableHead span:nth-child(3),
+  .tableHead span:nth-child(4),
+  .tableHead span:nth-child(5),
+  .tableRow > *:nth-child(3),
+  .tableRow > *:nth-child(4),
+  .tableRow > *:nth-child(5) {
+    display: none;
+  }
+}
+
+/* ── Mobile: card layout ── */
+@media (max-width: 600px) {
+  .tableHead { display: none; }
+  .tableRow {
+    display: flex; flex-direction: column; align-items: flex-start;
+    gap: 8px; padding: 14px 16px;
+  }
+  .hwDesc { white-space: normal; -webkit-line-clamp: 2; display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden; }
+  .rowRight { width: 100%; justify-content: flex-start; }
+  .title { font-size: 22px; }
+}

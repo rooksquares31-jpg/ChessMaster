@@ -6,7 +6,8 @@
 
 /* ── Stats ── */
 .statsRow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
-@media (max-width: 700px) { .statsRow { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 900px) { .statsRow { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 480px) { .statsRow { grid-template-columns: repeat(2, 1fr); gap: 10px; } }
 .statCard { display: flex; align-items: center; gap: 14px; padding: 18px 20px; }
 .statIcon { width: 40px; height: 40px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .statBody { }
@@ -43,17 +44,38 @@
 .tableWrap { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
 .tableHead {
   display: grid; grid-template-columns: 2fr 1.5fr 1fr 1fr 100px 80px;
-  gap: 16px; padding: 12px 20px;
+  gap: 14px; padding: 12px 20px;
   background: var(--bg-secondary); font-size: 11px; font-weight: 700;
   color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;
 }
 .tableRow {
   display: grid; grid-template-columns: 2fr 1.5fr 1fr 1fr 100px 80px;
-  gap: 16px; padding: 14px 20px; align-items: center;
+  gap: 14px; padding: 14px 20px; align-items: center;
   border-top: 1px solid var(--border);
   transition: background var(--transition);
 }
 .tableRow:hover { background: var(--bg-card-hover); }
+
+/* Tablet: collapse to fewer columns */
+@media (max-width: 900px) {
+  .tableHead,
+  .tableRow {
+    grid-template-columns: 2fr 1fr 100px 70px;
+  }
+  .tableHead span:nth-child(3),
+  .tableHead span:nth-child(4),
+  .tableRow > *:nth-child(3),
+  .tableRow > *:nth-child(4) {
+    display: none;
+  }
+}
+
+/* Mobile: stack as cards */
+@media (max-width: 600px) {
+  .tableHead { display: none; }
+  .tableRow { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; padding: 14px 16px; }
+  .statsRow { grid-template-columns: repeat(2, 1fr); }
+}
 
 .studentCell { display: flex; align-items: center; gap: 12px; cursor: pointer; }
 .studentCell:hover .studentName { color: var(--accent); }

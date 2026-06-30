@@ -83,37 +83,43 @@
 
 /* Solve page */
 .solvePage { display: flex; flex-direction: column; gap: 0; max-width: 1200px; }
-.solveHeader { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px 28px; margin-bottom: 24px; }
-.solveHeaderTop { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; }
-.solveTitle { font-size: 20px; font-weight: 800; color: var(--text-primary); }
+.solveHeader { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px 20px; margin-bottom: 20px; }
+.solveHeaderTop { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+.solveTitle { font-size: 18px; font-weight: 800; color: var(--text-primary); }
 .solveProgress { font-size: 13px; color: var(--text-secondary); margin-top: 4px; }
-.solveLayout { display: grid; grid-template-columns: auto 1fr; gap: 28px; align-items: start; }
+.solveLayout { display: grid; grid-template-columns: 1fr 340px; gap: 24px; align-items: start; }
 @media (max-width: 900px) { .solveLayout { grid-template-columns: 1fr; } }
-.boardSection { display: flex; flex-direction: column; gap: 16px; }
-.questionCard { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; }
-.questionTitle { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
-.questionText { font-size: 15px; font-weight: 600; color: var(--text-primary); }
+.boardSection { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.questionCard { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; }
+.questionTitle { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+.questionText { font-size: 14px; font-weight: 600; color: var(--text-primary); }
 .instructionText { font-size: 13px; color: var(--text-secondary); margin-top: 6px; }
-.sidePanel { display: flex; flex-direction: column; gap: 16px; }
-.posNav { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
-.posNavTitle { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; }
-.posGrid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; }
-.posBtn { width: 32px; height: 32px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg-input); font-size: 11px; font-weight: 600; color: var(--text-muted); cursor: pointer; transition: all var(--transition); display: flex; align-items: center; justify-content: center; font-family: inherit; }
+.sidePanel { display: flex; flex-direction: column; gap: 14px; }
+.posNav { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; }
+.posNavTitle { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; }
+/* Responsive grid — smaller cells on mobile */
+.posGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(32px, 1fr)); gap: 4px; }
+.posBtn { width: 100%; aspect-ratio: 1; border-radius: 6px; border: 1px solid var(--border); background: var(--bg-input); font-size: 10px; font-weight: 600; color: var(--text-muted); cursor: pointer; transition: all var(--transition); display: flex; align-items: center; justify-content: center; font-family: inherit; min-width: 28px; min-height: 28px; }
 .posBtn:hover { border-color: var(--accent); color: var(--accent); }
 .posBtnActive { border-color: var(--accent); background: var(--accent-dim); color: var(--accent); }
 .posBtnCorrect { border-color: var(--green); background: var(--green-dim); color: var(--green); }
 .posBtnWrong { border-color: var(--red); background: var(--red-dim); color: var(--red); }
 .posBtnReview { border-color: var(--yellow); background: var(--yellow-dim); color: var(--yellow); }
-.moveInput { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
-.moveInputTitle { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; margin-bottom: 10px; }
-.moveField { display: flex; gap: 8px; }
-.moveInputBox { flex: 1; background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text-primary); font-family: 'JetBrains Mono', monospace; font-size: 16px; font-weight: 700; padding: 10px 14px; outline: none; }
+.moveInput { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; }
+.moveInputTitle { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; margin-bottom: 10px; }
+.moveField { display: flex; gap: 8px; flex-wrap: wrap; }
+.moveInputBox { flex: 1; min-width: 120px; background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text-primary); font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 700; padding: 10px 14px; outline: none; }
 .moveInputBox:focus { border-color: var(--accent); }
-.resultFeedback { border-radius: var(--radius); padding: 14px 16px; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+.resultFeedback { border-radius: var(--radius); padding: 12px 14px; font-size: 14px; font-weight: 600; display: flex; align-items: flex-start; gap: 10px; flex-wrap: wrap; }
 .correct { background: var(--green-dim); border: 1px solid rgba(34,197,94,0.3); color: var(--green); }
 .wrong { background: var(--red-dim); border: 1px solid rgba(239,68,68,0.3); color: var(--red); }
-.navBtns { display: flex; gap: 8px; }
-.submitAllCard { background: var(--accent-dim); border: 1px solid rgba(79,142,247,0.3); border-radius: var(--radius); padding: 16px; text-align: center; }
+.navBtns { display: flex; gap: 8px; flex-wrap: wrap; }
+.submitAllCard { background: var(--accent-dim); border: 1px solid rgba(79,142,247,0.3); border-radius: var(--radius); padding: 14px; text-align: center; }
 .submitAllTitle { font-size: 15px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
 .submitAllSub { font-size: 13px; color: var(--text-secondary); margin-bottom: 12px; }
+
+@media (max-width: 480px) {
+  .solveTitle { font-size: 16px; }
+  .posBtn { font-size: 9px; }
+}
 

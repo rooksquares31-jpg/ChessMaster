@@ -6,7 +6,7 @@ import {
   Copy, Mic, MicOff, ArrowLeft, Shield, ShieldOff,
   Crown, GraduationCap, Eye, Pencil, WifiOff, Wifi,
   ChevronLeft, ChevronRight, SkipBack, SkipForward,
-  Phone,
+  Phone, Maximize2, Minimize2, X,
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { connectSocket } from '../../lib/socket'
@@ -158,6 +158,8 @@ export default function LiveClassroom() {
   const [fenInput,  setFenInput] = useState('')
   const [connected, setConnected] = useState(false)
   const [currentMoveIndex, setCurrentMoveIndex] = useState(null)
+  const [isFocusMode, setIsFocusMode] = useState(!isAdmin)
+  const [drawerOpen, setDrawerOpen] = useState(false)
   const moveListRef = useRef(null)
 
   // Voice chat hook
@@ -182,7 +184,12 @@ export default function LiveClassroom() {
     const onConnect    = () => { setConnected(true); socket.emit('room:join', { classroomId: id }) }
     const onDisconnect = () => setConnected(false)
 
-    const onRoomState      = (d) => setRoomState(d, myId)
+    const onRoomState      = (d) => {
+      setRoomState(d, myId)
+      if (d.classroom?.status === 'live' && !isAdmin) {
+        setIsFocusMode(true)
+      }
+    }
     const onParticipants   = ({ participants: list }) => updateParticipants(list, myId)
 
     // ── Instant board move ─────────────────────────────────────
@@ -203,8 +210,19 @@ export default function LiveClassroom() {
       }
     }
 
-    const onSessionStart = () => { setSessionStatus('live');  toast.success('🚀 Session started!') }
-    const onSessionEnd   = () => { setSessionStatus('ended'); toast('Session ended by coach'); if (voice.isInVoice) voice.leaveVoice() }
+    const onSessionStart = () => {
+      setSessionStatus('live')
+      toast.success('🚀 Session started!')
+      // Students default to focus mode on session start
+      if (!isAdmin) {
+        setIsFocusMode(true)
+      }
+    }
+    const onSessionEnd   = () => {
+      setSessionStatus('ended')
+      toast('Session ended by coach')
+      if (voice.isInVoice) voice.leaveVoice()
+    }
     const onChat  = (m) => addChat(m)
     const onError = (e) => toast.error(e.message || 'Socket error')
 
@@ -315,7 +333,7 @@ export default function LiveClassroom() {
 
   /* ── Render ─────────────────────────────────────────────────── */
   return (
-    <div className={styles.room}>
+    <div className={[styles.room, isFocusMode ? styles.focusMode : ''].join(' ')}>
 
       {/* ── Top bar ── */}
       <div className={styles.topBar}>
@@ -340,6 +358,17 @@ export default function LiveClassroom() {
           <div className={styles.connIndicator} title={connected ? 'Connected' : 'Reconnecting…'}>
             {connected ? <Wifi size={14} className={styles.connOn} /> : <WifiOff size={14} className={styles.connOff} />}
           </div>
+          <Button
+            size="sm"
+            variant={isFocusMode ? 'primary' : 'secondary'}
+            icon={isFocusMode ? <Minimize2 size={13} /> : <Maximize2 size={13} />}
+            onClick={() => {
+              setIsFocusMode(!isFocusMode)
+              setDrawerOpen(false)
+            }}
+          >
+            {isFocusMode ? 'Normal View' : 'Focus Mode'}
+          </Button>
           {isAdmin && (
             <>
               {sessionStatus === 'waiting' && (
@@ -384,29 +413,26 @@ export default function LiveClassroom() {
             </div>
           )}
 
-          {/* ── THE BOARD ──
-              Admin: interactive=true, onSelect/onDragUpdate/onDragCancel wired up
-              Student view-only: no overlays — just remoteSelected/remoteDragFrom/remoteDragOver
-              Student with control: interactive=true, same as admin
-          */}
-          <ChessBoard
-            key={`board-${id}`}
-            id={`live-${id}`}
-            fen={displayFen}
-            size={500}
-            interactive={canMove && sessionStatus === 'live' && !isViewingHistory}
-            onMove={emitMove}
-            onSelect={canMove && !isViewingHistory ? emitSelect : undefined}
-            onDragUpdate={canMove && !isViewingHistory ? emitDragUpdate : undefined}
-            onDragCancel={canMove && !isViewingHistory ? emitDragCancel : undefined}
-            lastMove={displayLastMove}
-            showCoordinates
-            // Remote cursor: only show on NON-mover's board
-            // (admin sees their own cursor natively; student sees admin's)
-            remoteSelected={!isAdmin ? selectedSquare : null}
-            remoteDragFrom={!isAdmin ? dragFrom        : null}
-            remoteDragOver={!isAdmin ? dragOver         : null}
-          />
+          {/* ── THE BOARD ── */}
+          <div className={styles.boardResponsive}>
+            <ChessBoard
+              key={`board-${id}`}
+              id={`live-${id}`}
+              fen={displayFen}
+              size={isFocusMode ? 820 : 640}
+              interactive={canMove && sessionStatus === 'live' && !isViewingHistory}
+              onMove={emitMove}
+              onSelect={canMove && !isViewingHistory ? emitSelect : undefined}
+              onDragUpdate={canMove && !isViewingHistory ? emitDragUpdate : undefined}
+              onDragCancel={canMove && !isViewingHistory ? emitDragCancel : undefined}
+              lastMove={displayLastMove}
+              showCoordinates
+              allowFullscreen={isAdmin}
+              remoteSelected={!isAdmin ? selectedSquare : null}
+              remoteDragFrom={!isAdmin ? dragFrom        : null}
+              remoteDragOver={!isAdmin ? dragOver         : null}
+            />
+          </div>
 
           {/* Status bar — clean, below board */}
           {statusInfo && (
@@ -467,8 +493,21 @@ export default function LiveClassroom() {
           </div>
         </div>
 
+        {/* ── Drawer Trigger & Overlay for Focus Mode ── */}
+        {isFocusMode && (
+          <>
+            <button className={styles.drawerTrigger} onClick={() => setDrawerOpen(!drawerOpen)}>
+              <Users size={16} />
+              <span className={styles.drawerTriggerText}>{drawerOpen ? 'Hide Info' : 'Show Info'}</span>
+            </button>
+            {drawerOpen && (
+              <div className={styles.drawerOverlay} onClick={() => setDrawerOpen(false)} />
+            )}
+          </>
+        )}
+
         {/* ── Side panel ── */}
-        <div className={styles.sidePanel}>
+        <div className={isFocusMode ? [styles.sidePanelDrawer, drawerOpen ? styles.drawerOpen : ''].join(' ') : styles.sidePanel}>
           <div className={styles.tabs}>
             <button className={[styles.tab, tab === 'participants' ? styles.tabActive : ''].join(' ')}
               onClick={() => setTab('participants')}>
@@ -571,6 +610,7 @@ export default function LiveClassroom() {
         onToggleMute={voice.toggleMute}
         participants={participants}
         myId={myId}
+        onRightSide={true}
       />
     </div>
   )

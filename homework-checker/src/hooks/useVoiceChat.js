@@ -303,6 +303,22 @@ export default function useVoiceChat(socketRef, classroomId, myId) {
         toast('🔇 You were muted by the coach', { icon: '🔇' })
       }
     },
+
+    onSocketConnect: () => {
+      if (localStreamRef.current) {
+        console.log('🎙️ Socket reconnected. Re-joining voice call and resetting peer connections...')
+        // Close old peers
+        for (const [sid] of peersRef.current) {
+          implRef.current.removePeer?.(sid)
+        }
+        peersRef.current.clear()
+        audioElementsRef.current.clear()
+        iceCandidateBuffer.current.clear()
+
+        // Re-announce readiness
+        socketRef.current?.emit('voice:ready', { classroomId })
+      }
+    },
   }
 
   /* ── Create stable wrapper functions ONCE ── */
@@ -314,6 +330,7 @@ export default function useVoiceChat(socketRef, classroomId, myId) {
       onIceCandidate:  (data) => implRef.current.onIceCandidate(data),
       onVoiceLeave:    (data) => implRef.current.onVoiceLeave(data),
       onForceMute:     (data) => implRef.current.onForceMute(data),
+      onSocketConnect: () => implRef.current.onSocketConnect(),
     }
   }
 
@@ -329,6 +346,7 @@ export default function useVoiceChat(socketRef, classroomId, myId) {
     socket.on('voice:ice-candidate', h.onIceCandidate)
     socket.on('voice:leave',         h.onVoiceLeave)
     socket.on('voice:force-mute',    h.onForceMute)
+    socket.on('connect',             h.onSocketConnect)
 
     listenersAttachedRef.current = true
     console.log('🎙️ Voice listeners attached')
@@ -346,6 +364,7 @@ export default function useVoiceChat(socketRef, classroomId, myId) {
     socket.off('voice:ice-candidate', h.onIceCandidate)
     socket.off('voice:leave',         h.onVoiceLeave)
     socket.off('voice:force-mute',    h.onForceMute)
+    socket.off('connect',             h.onSocketConnect)
 
     listenersAttachedRef.current = false
     console.log('🎙️ Voice listeners detached')
@@ -383,6 +402,9 @@ export default function useVoiceChat(socketRef, classroomId, myId) {
 
       // Now announce to all peers in the room
       socketRef.current?.emit('voice:ready', { classroomId })
+
+      // Persist state to auto-join on refresh
+      sessionStorage.setItem(`voice_joined_${classroomId}`, 'true')
 
       toast.success('🎤 Joined voice chat')
     } catch (err) {
@@ -448,6 +470,9 @@ export default function useVoiceChat(socketRef, classroomId, myId) {
 
     // Detach socket listeners
     detachListeners()
+
+    // Clear persisted voice join state
+    sessionStorage.removeItem(`voice_joined_${classroomId}`)
 
     setIsInVoice(false)
     setIsMuted(false)
@@ -518,11 +543,24 @@ export default function useVoiceChat(socketRef, classroomId, myId) {
         socket.off('voice:ice-candidate', h.onIceCandidate)
         socket.off('voice:leave',         h.onVoiceLeave)
         socket.off('voice:force-mute',    h.onForceMute)
+        socket.off('connect',             h.onSocketConnect)
       }
       // Clear store state
       clearVoiceState()
     }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  /* ── Auto-rejoin on refresh ── */
+  useEffect(() => {
+    const autoJoin = sessionStorage.getItem(`voice_joined_${classroomId}`) === 'true'
+    if (autoJoin && !localStreamRef.current && !isJoining) {
+      console.log('🎙️ Auto-rejoining voice chat after page refresh...')
+      const timer = setTimeout(() => {
+        joinVoice()
+      }, 800)
+      return () => clearTimeout(timer)
+    }
+  }, [classroomId, joinVoice, isJoining])
 
   return {
     isInVoice,

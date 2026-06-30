@@ -10,10 +10,16 @@
 
 .card {
   background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-xl);
-  padding: 40px; width: 100%; max-width: 420px; position: relative; z-index: 1;
+  padding: 36px 32px; width: 100%; max-width: 420px; position: relative; z-index: 1;
   box-shadow: var(--shadow-lg); animation: slideUp 0.3s ease;
 }
 @keyframes slideUp { from { transform: translateY(24px); opacity: 0 } to { transform: translateY(0); opacity: 1 } }
+
+@media (max-width: 480px) {
+  .card { padding: 28px 20px; border-radius: var(--radius-lg); }
+  .logoName { font-size: 18px; }
+  .demoGrid { grid-template-columns: 1fr; }
+}
 
 .logo { display: flex; align-items: center; gap: 14px; margin-bottom: 24px; }
 .logoIcon { font-size: 36px; line-height: 1; }

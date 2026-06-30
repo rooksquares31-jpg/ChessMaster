@@ -166,7 +166,7 @@ export default function SolveHomework() {
           <ChessBoard
             key={`${current}-${currentFen}-${!!currentAnswer}-${resetKey}`}
             fen={currentFen}
-            size={420}
+            size={600}
             interactive={!currentAnswer}
             onMove={({ san }) => {
               if (!currentAnswer) setMoveInput(san)

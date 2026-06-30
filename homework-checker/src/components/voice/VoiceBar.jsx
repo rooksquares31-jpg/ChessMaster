@@ -14,6 +14,7 @@ export default function VoiceBar({
   onToggleMute,
   participants,
   myId,
+  onRightSide = false,
 }) {
   const { voiceParticipants, speakingUsers } = useClassroomStore()
 
@@ -28,7 +29,7 @@ export default function VoiceBar({
   /* ── Not in voice — show just the join button ── */
   if (!isInVoice) {
     return (
-      <div className={styles.voiceBarIdle}>
+      <div className={`${styles.voiceBarIdle} ${onRightSide ? styles.voiceBarRight : ''}`}>
         <button
           className={`${styles.voiceJoinBtn} ${styles.joinBtn}`}
           onClick={onJoin}
@@ -53,7 +54,7 @@ export default function VoiceBar({
 
   /* ── In voice — show full control bar ── */
   return (
-    <div className={styles.voiceBar}>
+    <div className={`${styles.voiceBar} ${onRightSide ? styles.voiceBarRight : ''}`}>
       {/* Voice status */}
       <div className={styles.voiceInfo}>
         <div className={styles.voiceStatusDot} />

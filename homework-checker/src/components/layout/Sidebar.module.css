@@ -1,48 +1,138 @@
+/* ── Desktop sidebar ──────────────────────────────────────────────── */
 .sidebar {
-  width: 240px; min-height: 100vh; background: var(--bg-secondary);
-  border-right: 1px solid var(--border); display: flex; flex-direction: column;
-  padding: 24px 16px; position: fixed; left: 0; top: 0; bottom: 0;
+  width: 230px;
+  min-height: 100vh;
+  background: var(--bg-secondary);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  padding: 20px 14px;
+  position: fixed;
+  left: 0; top: 0; bottom: 0;
   z-index: 100;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
-.logo { display: flex; align-items: center; gap: 12px; padding: 0 8px 24px; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
-.logoIcon { font-size: 28px; line-height: 1; }
-.logoName { font-size: 16px; font-weight: 800; color: var(--text-primary); letter-spacing: -0.02em; }
-.logoSub { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+/* ── Mobile drawer (hidden by default) ───────────────────────────── */
+.drawer {
+  width: 230px;
+  min-height: 100vh;
+  background: var(--bg-secondary);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  padding: 20px 14px;
+  position: fixed;
+  left: 0; top: 0; bottom: 0;
+  z-index: 300;
+  transform: translateX(-100%);
+  transition: transform 0.25s ease;
+  overflow-y: auto;
+}
+.drawerOpen { transform: translateX(0); }
+.drawerClose {
+  position: absolute; top: 14px; right: 12px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); color: var(--text-secondary);
+  cursor: pointer; padding: 6px; display: flex;
+  transition: color var(--transition);
+}
+.drawerClose:hover { color: var(--text-primary); }
 
+/* ── Backdrop ─────────────────────────────────────────────────────── */
+.backdrop {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+  z-index: 299; backdrop-filter: blur(2px);
+}
+
+/* ── Hamburger (mobile only) ─────────────────────────────────────── */
+.hamburger {
+  display: none;
+  position: fixed; top: 14px; left: 14px;
+  z-index: 200;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text-primary);
+  cursor: pointer; padding: 8px;
+  box-shadow: var(--shadow);
+}
+
+/* ── Logo ─────────────────────────────────────────────────────────── */
+.logo {
+  display: flex; align-items: center; gap: 11px;
+  padding: 0 6px 20px; border-bottom: 1px solid var(--border);
+  margin-bottom: 16px; flex-shrink: 0;
+}
+.logoIcon { font-size: 26px; line-height: 1; flex-shrink: 0; }
+.logoText { min-width: 0; }
+.logoName { font-size: 15px; font-weight: 800; color: var(--text-primary); letter-spacing: -0.02em; white-space: nowrap; }
+.logoSub  { font-size: 10px; color: var(--text-muted); margin-top: 1px; white-space: nowrap; }
+
+/* ── Role badge ───────────────────────────────────────────────────── */
 .roleBadge {
-  display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 600;
-  color: var(--accent); background: var(--accent-dim); border: 1px solid rgba(79,142,247,0.2);
-  padding: 5px 12px; border-radius: 999px; margin-bottom: 20px; align-self: flex-start;
+  display: flex; align-items: center; gap: 5px;
+  font-size: 10px; font-weight: 600;
+  color: var(--accent); background: var(--accent-dim);
+  border: 1px solid rgba(79,142,247,0.2);
+  padding: 4px 10px; border-radius: 999px;
+  margin-bottom: 16px; align-self: flex-start; flex-shrink: 0;
+  white-space: nowrap;
 }
+.roleBadgeText { overflow: hidden; text-overflow: ellipsis; }
 
+/* ── Nav ──────────────────────────────────────────────────────────── */
 .nav { flex: 1; display: flex; flex-direction: column; gap: 2px; }
 
 .navItem {
-  display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: var(--radius);
-  color: var(--text-secondary); font-size: 14px; font-weight: 500;
-  transition: all var(--transition); text-decoration: none; position: relative;
+  display: flex; align-items: center; gap: 9px;
+  padding: 9px 11px; border-radius: var(--radius);
+  color: var(--text-secondary); font-size: 13px; font-weight: 500;
+  transition: all var(--transition); text-decoration: none;
 }
 .navItem:hover { color: var(--text-primary); background: var(--bg-card); }
 .navItem.active { color: var(--accent); background: var(--accent-dim); }
-.navItem.active .navIcon { color: var(--accent); }
 .navIcon { flex-shrink: 0; display: flex; }
-.navLabel { flex: 1; }
-.chevron { opacity: 0; transition: opacity var(--transition); margin-left: auto; }
+.navLabel { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.chevron { opacity: 0; transition: opacity var(--transition); margin-left: auto; flex-shrink: 0; }
 .navItem:hover .chevron, .navItem.active .chevron { opacity: 1; }
 
+/* ── User card ────────────────────────────────────────────────────── */
 .user {
-  display: flex; align-items: center; gap: 10px; padding: 12px;
-  border-top: 1px solid var(--border); margin-top: 16px;
+  display: flex; align-items: center; gap: 9px; padding: 11px;
+  border-top: 1px solid var(--border); margin-top: 12px;
   background: var(--bg-card); border-radius: var(--radius); flex-shrink: 0;
 }
 .avatar {
-  width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--purple));
+  width: 32px; height: 32px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--purple));
   display: flex; align-items: center; justify-content: center;
-  font-size: 13px; font-weight: 700; color: #fff; flex-shrink: 0;
+  font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0;
 }
 .userInfo { flex: 1; min-width: 0; }
-.userName { font-size: 13px; font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.userEmail { font-size: 11px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.logoutBtn { background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 4px; border-radius: var(--radius-sm); display: flex; transition: color var(--transition); flex-shrink: 0; }
+.userName  { font-size: 12px; font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.userEmail { font-size: 10px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.logoutBtn {
+  background: none; border: none; color: var(--text-muted);
+  cursor: pointer; padding: 4px; border-radius: var(--radius-sm);
+  display: flex; transition: color var(--transition); flex-shrink: 0;
+}
 .logoutBtn:hover { color: var(--red); }
+
+/* ══════════════════════════════════════════════════════════════════
+   RESPONSIVE BREAKPOINTS
+══════════════════════════════════════════════════════════════════ */
+
+/* Tablet: 768px – 1023px — sidebar still visible but narrower */
+@media (max-width: 1023px) and (min-width: 769px) {
+  .sidebar { width: 200px; padding: 16px 10px; }
+  .logoName { font-size: 13px; }
+  .navItem  { font-size: 12px; padding: 8px 9px; }
+}
+
+/* Mobile: ≤ 768px — sidebar hidden; hamburger + drawer used */
+@media (max-width: 768px) {
+  .sidebar    { display: none; }
+  .hamburger  { display: flex; }
+}

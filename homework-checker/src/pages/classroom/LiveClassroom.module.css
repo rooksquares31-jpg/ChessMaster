@@ -1,11 +1,61 @@
-/* ── Room layout ── */
+/* ════════════════════════════════════════════════════════════════
+   LIVE CLASSROOM  — full-height layout
+   Key rule: the board column MUST NOT shrink when the side panel grows.
+   We use overflow-y: auto on the whole page so the board is always
+   fully visible and the side panel scrolls independently.
+════════════════════════════════════════════════════════════════ */
+
 .room {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 32px);
-  gap: 0;
+  min-height: 100vh;           /* fill the viewport height */
   max-width: 1400px;
-  padding-bottom: 80px; /* space for floating voice bar */
+  padding-bottom: 90px;        /* clear the floating voice bar */
+  box-sizing: border-box;
+}
+
+/* ── Focus Mode Layout overrides ── */
+.room.focusMode {
+  max-width: 900px;
+  margin: 0 auto;
+}
+.room.focusMode .backBtn,
+.room.focusMode .codeChip,
+.room.focusMode .connIndicator {
+  display: none !important;
+}
+.room.focusMode .mainArea {
+  grid-template-columns: 1fr !important;
+  justify-items: center;
+  padding-top: 10px;
+}
+.room.focusMode .sidePanel {
+  display: none !important;
+}
+.room.focusMode .boardCol {
+  align-items: center;
+  width: 100%;
+}
+
+.exitFocusBtn {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all var(--transition);
+}
+.exitFocusBtn:hover {
+  border-color: var(--red);
+  color: var(--red);
+  background: rgba(239, 68, 68, 0.05);
 }
 
 /* ── Top bar ── */
@@ -13,7 +63,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 10px 0 14px;
+  padding: 12px 0 16px;
   border-bottom: 1px solid var(--border);
   flex-shrink: 0;
   flex-wrap: wrap;
@@ -24,94 +74,55 @@
   border: 1px solid var(--border);
   border-radius: var(--radius);
   color: var(--text-secondary);
-  cursor: pointer;
-  padding: 8px;
-  display: flex;
-  transition: all var(--transition);
-  flex-shrink: 0;
+  cursor: pointer; padding: 8px; display: flex;
+  transition: all var(--transition); flex-shrink: 0;
 }
 .backBtn:hover { border-color: var(--accent); color: var(--accent); }
 
-.roomTitle {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex: 1;
-  min-width: 0;
-}
+.roomTitle { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
 .roomName {
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--text-primary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  font-size: 16px; font-weight: 700; color: var(--text-primary);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 
 .topRight {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-left: auto;
-  flex-wrap: wrap;
-  flex-shrink: 0;
+  display: flex; align-items: center; gap: 10px;
+  margin-left: auto; flex-wrap: wrap; flex-shrink: 0;
 }
 
 .codeChip {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 6px 12px;
+  display: flex; align-items: center; gap: 7px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 6px 12px;
 }
-.codeLbl {
-  font-size: 9px;
-  font-weight: 800;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-.codeVal {
-  font-size: 17px;
-  font-weight: 900;
-  color: var(--accent);
-  font-family: 'JetBrains Mono', monospace;
-  letter-spacing: 0.14em;
-}
-.iconBtn {
-  background: none;
-  border: none;
-  color: var(--text-muted);
-  cursor: pointer;
-  display: flex;
-  padding: 2px;
-  border-radius: 4px;
-  transition: color var(--transition);
-}
+.codeLbl { font-size: 9px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; }
+.codeVal { font-size: 17px; font-weight: 900; color: var(--accent); font-family: 'JetBrains Mono', monospace; letter-spacing: 0.14em; }
+.iconBtn { background: none; border: none; color: var(--text-muted); cursor: pointer; display: flex; padding: 2px; border-radius: 4px; transition: color var(--transition); }
 .iconBtn:hover { color: var(--accent); }
 
-.connIndicator {
-  display: flex;
-  align-items: center;
-  padding: 4px;
-}
+.connIndicator { display: flex; align-items: center; padding: 4px; }
 .connOn  { color: var(--green); }
 .connOff { color: var(--red); animation: blink 1s ease infinite; }
 @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
-/* ── Main grid ── */
+/* ════════════════════════════════════════════════════════════════
+   MAIN AREA
+   - Board column: fixed width (never shrinks), left side
+   - Side panel: fills remaining space, right side
+   KEY FIX: align-items: start prevents the grid from stretching
+   the board column to equal height with the side panel, which
+   was causing the board to be clipped by overflow:hidden.
+════════════════════════════════════════════════════════════════ */
 .mainArea {
   display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 20px;
-  flex: 1;
-  overflow: hidden;
-  padding-top: 16px;
-  align-items: start;
+  grid-template-columns: 1fr 340px;  /* board takes remaining space; sidebar is fixed narrow */
+  gap: 24px;
+  padding-top: 18px;
+  align-items: start;               /* CRITICAL — prevents height stretching */
 }
-@media (max-width: 1000px) {
+
+/* Tablet: single column */
+@media (max-width: 1060px) {
   .mainArea { grid-template-columns: 1fr; }
 }
 
@@ -119,176 +130,106 @@
 .boardCol {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  align-items: flex-start;
+  gap: 12px;
+  flex-shrink: 0;   /* NEVER shrink the board column */
+  min-width: 0;
 }
 
-/* Admin toolbar above the board */
+/* ── Board responsive wrapper ── */
+.boardResponsive {
+  /* The ChessBoard component handles its own sizing via the size prop.
+     This wrapper just ensures it never overflows on narrow screens. */
+  flex-shrink: 0;
+  max-width: 100%;
+}
+
+/* ── Admin toolbar ── */
 .boardToolbar {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-  width: 100%;
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap; width: 100%;
 }
 .toolBtn {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  color: var(--text-secondary);
-  font-family: inherit;
-  font-size: 12px;
-  font-weight: 600;
-  padding: 6px 12px;
-  cursor: pointer;
-  transition: all var(--transition);
-  white-space: nowrap;
+  display: flex; align-items: center; gap: 5px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); color: var(--text-secondary);
+  font-family: inherit; font-size: 12px; font-weight: 600;
+  padding: 6px 12px; cursor: pointer; transition: all var(--transition); white-space: nowrap;
 }
 .toolBtn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
 .toolBtn:disabled { opacity: 0.4; cursor: not-allowed; }
 .fenRow { display: flex; gap: 6px; flex: 1; min-width: 0; }
 .fenInput {
-  flex: 1;
-  min-width: 0;
-  background: var(--bg-input);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  color: var(--text-primary);
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  padding: 6px 10px;
-  outline: none;
-  transition: border-color var(--transition);
+  flex: 1; min-width: 0;
+  background: var(--bg-input); border: 1px solid var(--border);
+  border-radius: var(--radius); color: var(--text-primary);
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  padding: 6px 10px; outline: none; transition: border-color var(--transition);
 }
 .fenInput:focus { border-color: var(--accent); }
 .fenInput::placeholder { color: var(--text-muted); }
 
 /* Playback controls */
 .playbackControls {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 4px;
+  display: flex; align-items: center; gap: 4px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 4px;
 }
 .pbBtn {
-  background: transparent;
-  border: none;
-  border-radius: 4px;
-  color: var(--text-secondary);
-  cursor: pointer;
-  padding: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background: transparent; border: none; border-radius: 4px;
+  color: var(--text-secondary); cursor: pointer; padding: 6px;
+  display: flex; align-items: center; justify-content: center;
   transition: all var(--transition);
 }
 .pbBtn:hover:not(:disabled) { background: var(--bg-card-hover); color: var(--accent); }
 .pbBtn:disabled { opacity: 0.3; cursor: not-allowed; }
 
-/* Status bar BELOW the board */
+/* ── Status bar (below board) ── */
 .boardStatus {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 12px;
-  font-weight: 600;
-  padding: 7px 14px;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  width: 100%;
+  display: flex; align-items: center; gap: 8px;
+  font-size: 12px; font-weight: 600; padding: 7px 14px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); width: 100%;
 }
 
-/* Live drag indicator shown on student's status bar */
 .dragIndicator {
-  margin-left: auto;
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--purple);
-  background: var(--purple-dim);
-  border: 1px solid rgba(168,85,247,0.25);
-  border-radius: 999px;
-  padding: 2px 10px;
+  margin-left: auto; font-size: 11px; font-weight: 700;
+  color: var(--purple); background: var(--purple-dim);
+  border: 1px solid rgba(168,85,247,0.25); border-radius: 999px; padding: 2px 10px;
   animation: dragPulse 0.8s ease infinite;
 }
 @keyframes dragPulse { 0%,100%{opacity:1} 50%{opacity:0.55} }
 
-/* Move history */
+/* ── Move history (below board) ── */
 .moveHistory {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 10px 14px;
-  width: 100%;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 10px 14px; width: 100%;
 }
 .moveHistoryLbl {
-  font-size: 10px;
-  font-weight: 700;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  display: block;
-  margin-bottom: 8px;
+  font-size: 10px; font-weight: 700; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 0.06em; display: block; margin-bottom: 8px;
 }
 .moveList {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  max-height: 180px;
-  overflow-y: auto;
+  display: flex; flex-direction: column; gap: 2px;
+  max-height: 160px; overflow-y: auto;
 }
-.moveRow {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 2px 4px;
-  border-radius: 4px;
-}
-.moveRow:hover {
-  background: var(--bg-card-hover);
-}
-.moveRowNumber {
-  color: var(--text-muted);
-  font-size: 11px;
-  width: 24px;
-  text-align: right;
-  font-family: 'JetBrains Mono', monospace;
-}
+.moveRow { display: flex; align-items: center; gap: 6px; padding: 2px 4px; border-radius: 4px; }
+.moveRow:hover { background: var(--bg-card-hover); }
+.moveRowNumber { color: var(--text-muted); font-size: 11px; width: 24px; text-align: right; font-family: 'JetBrains Mono', monospace; }
 .moveChip {
-  background: var(--bg-input);
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  padding: 2px 7px;
-  font-size: 12px;
-  font-family: 'JetBrains Mono', monospace;
-  color: var(--text-secondary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 2px;
-  flex: 1;
-  text-align: center;
-  cursor: pointer;
+  background: var(--bg-input); border: 1px solid var(--border); border-radius: 4px;
+  padding: 2px 7px; font-size: 12px; font-family: 'JetBrains Mono', monospace;
+  color: var(--text-secondary); display: flex; align-items: center; justify-content: center;
+  gap: 2px; flex: 1; text-align: center; cursor: pointer;
 }
-.moveChipEmpty {
-  flex: 1;
-  visibility: hidden;
-}
-.moveChipLast {
-  background: var(--accent-dim);
-  border-color: rgba(79,142,247,0.4);
-  color: var(--accent);
-  font-weight: 700;
-}
+.moveChipEmpty { flex: 1; visibility: hidden; }
+.moveChipLast { background: var(--accent-dim); border-color: rgba(79,142,247,0.4); color: var(--accent); font-weight: 700; }
 .noMoves { font-size: 12px; color: var(--text-muted); }
 
-/* ── Side panel ── */
+/* ════════════════════════════════════════════════════════════════
+   SIDE PANEL
+   Height is NOT fixed — it grows with content. The panel scrolls
+   its own list sections internally, not the whole panel.
+   This means switching to Chat does NOT affect the board layout.
+════════════════════════════════════════════════════════════════ */
 .sidePanel {
   background: var(--bg-card);
   border: 1px solid var(--border);
@@ -296,208 +237,170 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  height: 600px;  /* fixed height so it doesn't grow */
+  /* No fixed height — let it grow naturally */
+  min-height: 460px;
+  max-height: calc(100vh - 180px); /* never taller than the viewport */
 }
 
-/* Tabs */
-.tabs {
-  display: flex;
-  border-bottom: 1px solid var(--border);
-  flex-shrink: 0;
-}
+/* ── Tabs ── */
+.tabs { display: flex; border-bottom: 1px solid var(--border); flex-shrink: 0; }
 .tab {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-  padding: 11px 8px;
-  background: none;
-  border: none;
-  font-family: inherit;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--text-muted);
-  cursor: pointer;
+  flex: 1; display: flex; align-items: center; justify-content: center; gap: 5px;
+  padding: 11px 8px; background: none; border: none; font-family: inherit;
+  font-size: 13px; font-weight: 500; color: var(--text-muted); cursor: pointer;
   transition: all var(--transition);
 }
 .tab:hover { color: var(--text-primary); background: var(--bg-card-hover); }
 .tabActive { color: var(--accent); background: var(--accent-dim); font-weight: 600; }
 .chatBadge {
-  background: var(--accent);
-  color: #fff;
-  border-radius: 999px;
-  font-size: 10px;
-  font-weight: 700;
-  padding: 1px 5px;
-  min-width: 16px;
-  text-align: center;
+  background: var(--accent); color: #fff; border-radius: 999px;
+  font-size: 10px; font-weight: 700; padding: 1px 5px; min-width: 16px; text-align: center;
 }
 
-/* ── Participants ── */
+/* ── Participant list (scrollable) ── */
 .participantList {
-  flex: 1;
-  overflow-y: auto;
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+  flex: 1; overflow-y: auto; padding: 10px;
+  display: flex; flex-direction: column; gap: 2px;
 }
 .sectionLbl {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 10px;
-  font-weight: 700;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  padding: 5px 6px 3px;
+  display: flex; align-items: center; gap: 5px; font-size: 10px; font-weight: 700;
+  color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; padding: 5px 6px 3px;
 }
-.pRow {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 8px;
-  border-radius: var(--radius);
-  transition: background var(--transition);
-}
+.pRow { display: flex; align-items: center; gap: 10px; padding: 8px; border-radius: var(--radius); transition: background var(--transition); }
 .pRow:hover { background: var(--bg-card-hover); }
-.pRowMe {
-  background: var(--accent-dim);
-  border: 1px solid rgba(79,142,247,0.18);
-}
+.pRowMe { background: var(--accent-dim); border: 1px solid rgba(79,142,247,0.18); }
 .pRowInactive { opacity: 0.45; }
-.hostRow {
-  background: rgba(245,158,11,0.07);
-  border: 1px solid rgba(245,158,11,0.18);
-}
-.pAvatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  font-weight: 700;
-  color: #fff;
-  flex-shrink: 0;
-}
+.hostRow { background: rgba(245,158,11,0.07); border: 1px solid rgba(245,158,11,0.18); }
+.pAvatar { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0; }
 .pInfo { flex: 1; min-width: 0; }
-.pName {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-primary);
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.youTag {
-  font-size: 9px;
-  font-weight: 700;
-  background: var(--accent-dim);
-  color: var(--accent);
-  padding: 1px 5px;
-  border-radius: 4px;
-  flex-shrink: 0;
-}
+.pName { font-size: 13px; font-weight: 600; color: var(--text-primary); display: flex; align-items: center; gap: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.youTag { font-size: 9px; font-weight: 700; background: var(--accent-dim); color: var(--accent); padding: 1px 5px; border-radius: 4px; flex-shrink: 0; }
 .pBadges { display: flex; gap: 4px; margin-top: 2px; flex-wrap: wrap; }
 .pActions { display: flex; gap: 4px; flex-shrink: 0; }
-.permBtn {
-  background: var(--bg-input);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  color: var(--text-muted);
-  cursor: pointer;
-  padding: 5px;
-  display: flex;
-  transition: all var(--transition);
-}
+.permBtn { background: var(--bg-input); border: 1px solid var(--border); border-radius: 6px; color: var(--text-muted); cursor: pointer; padding: 5px; display: flex; transition: all var(--transition); }
 .permBtn:hover { border-color: var(--accent); color: var(--accent); }
 .permActive  { border-color: var(--green); background: var(--green-dim); color: var(--green); }
-.muteActive  { border-color: var(--red);   background: var(--red-dim);   color: var(--red);   }
-.noParticipants {
-  font-size: 12px;
-  color: var(--text-muted);
-  padding: 12px 8px;
-  text-align: center;
-}
+.muteActive  { border-color: var(--red);   background: var(--red-dim);   color: var(--red); }
+.noParticipants { font-size: 12px; color: var(--text-muted); padding: 12px 8px; text-align: center; }
 
-/* ── Chat ── */
-.chat {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-.chatMessages {
-  flex: 1;
-  overflow-y: auto;
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.chatEmpty {
-  text-align: center;
-  color: var(--text-muted);
-  font-size: 13px;
-  padding: 24px;
-}
+/* ── Chat (scrollable independently) ── */
+.chat { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+.chatMessages { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+.chatEmpty { text-align: center; color: var(--text-muted); font-size: 13px; padding: 24px; }
 .chatMsg { display: flex; flex-direction: column; gap: 2px; max-width: 88%; }
 .chatMsgMe { align-self: flex-end; align-items: flex-end; }
 .chatSender { font-size: 10px; font-weight: 600; color: var(--text-muted); padding: 0 4px; }
 .chatBubble {
-  background: var(--bg-card-hover);
-  border: 1px solid var(--border);
+  background: var(--bg-card-hover); border: 1px solid var(--border);
   border-radius: 10px 10px 10px 3px;
-  padding: 7px 11px;
-  font-size: 13px;
-  color: var(--text-primary);
-  line-height: 1.45;
-  word-break: break-word;
+  padding: 7px 11px; font-size: 13px; color: var(--text-primary);
+  line-height: 1.45; word-break: break-word;
 }
 .chatMsgMe .chatBubble {
-  background: var(--accent-dim);
-  border-color: rgba(79,142,247,0.3);
+  background: var(--accent-dim); border-color: rgba(79,142,247,0.3);
   border-radius: 10px 10px 3px 10px;
 }
 .chatTime { font-size: 10px; color: var(--text-muted); padding: 0 4px; }
 .chatInputRow {
-  display: flex;
-  gap: 8px;
-  padding: 10px 12px;
-  border-top: 1px solid var(--border);
-  flex-shrink: 0;
+  display: flex; gap: 8px; padding: 10px 12px;
+  border-top: 1px solid var(--border); flex-shrink: 0;
 }
 .chatBox {
-  flex: 1;
-  background: var(--bg-input);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  color: var(--text-primary);
-  font-family: inherit;
-  font-size: 13px;
-  padding: 8px 12px;
-  outline: none;
+  flex: 1; background: var(--bg-input); border: 1px solid var(--border);
+  border-radius: var(--radius); color: var(--text-primary);
+  font-family: inherit; font-size: 13px; padding: 8px 12px; outline: none;
   transition: border-color var(--transition);
 }
 .chatBox:focus { border-color: var(--accent); }
 .chatBox::placeholder { color: var(--text-muted); }
 .chatSendBtn {
-  background: var(--accent);
-  border: none;
-  border-radius: var(--radius);
-  color: #fff;
-  cursor: pointer;
-  padding: 8px 12px;
-  display: flex;
-  align-items: center;
+  background: var(--accent); border: none; border-radius: var(--radius);
+  color: #fff; cursor: pointer; padding: 8px 12px; display: flex; align-items: center;
   transition: background var(--transition);
 }
 .chatSendBtn:hover:not(:disabled) { background: var(--accent-hover); }
 .chatSendBtn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ════════════════════════════════════════════════════════════════
+   MOBILE — stack board on top of side panel
+════════════════════════════════════════════════════════════════ */
+@media (max-width: 1060px) {
+  .sidePanel { max-height: 500px; min-height: 360px; }
+}
+
+@media (max-width: 600px) {
+  .room { padding-bottom: 70px; }
+  .codeVal { font-size: 14px; letter-spacing: 0.08em; }
+  .sidePanel { max-height: 420px; min-height: 300px; }
+  .moveList { max-height: 100px; }
+}
+
+/* ── Sliding sidebar drawer for Focus Mode ── */
+.sidePanelDrawer {
+  position: fixed;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 360px;
+  background: var(--bg-card);
+  border-left: 1px solid var(--border);
+  box-shadow: -5px 0 25px rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  height: 100vh;
+}
+
+.sidePanelDrawer.drawerOpen {
+  transform: translateX(0);
+}
+
+.drawerOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(2px);
+  z-index: 999;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.drawerTrigger {
+  position: fixed;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 8px 0 0 8px;
+  padding: 14px 8px;
+  cursor: pointer;
+  z-index: 998;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.3);
+  transition: background var(--transition), transform var(--transition);
+}
+
+.drawerTrigger:hover {
+  background: var(--accent-hover);
+  transform: translateY(-50%) scaleX(1.05);
+}
+
+.drawerTriggerText {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
