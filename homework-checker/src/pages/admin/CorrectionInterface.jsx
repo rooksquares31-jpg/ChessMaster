@@ -4,7 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import {
   Users, BookOpen, CheckCircle, XCircle, HelpCircle,
   ChevronRight, Save, Trophy, RotateCcw,
-  Clock, Minus, BadgeCheck, Search,
+  Clock, Minus, BadgeCheck, Search, Download,
 } from 'lucide-react'
 import { format, isPast } from 'date-fns'
 import toast from 'react-hot-toast'
@@ -13,6 +13,7 @@ import Card from '../../components/ui/Card'
 import Badge from '../../components/ui/Badge'
 import Button from '../../components/ui/Button'
 import styles from './CorrectionInterface.module.css'
+import { generateCorrectionPDF } from '../../utils/generateCorrectionPDF'
 
 // ---------- Per‑student status helper ----------
 // Global Homework.status is NOT reliable for the admin UI – it flips when any student is corrected.
@@ -63,6 +64,16 @@ function parsePositionCount(hw) {
   return 1
 }
 
+// Parse the starting position offset from the description (e.g. "Positions 51-100")
+function getHomeworkOffset(hw) {
+  if (!hw || !hw.description) return 0
+  const match = hw.description.match(/Positions (\d+)-\d+/)
+  if (match && match[1]) {
+    return parseInt(match[1], 10) - 1
+  }
+  return 0
+}
+
 export default function CorrectionInterface() {
   const qc = useQueryClient()
   const location = useLocation()
@@ -78,10 +89,13 @@ export default function CorrectionInterface() {
   const [selectedHw, setSelectedHw]           = useState(null)  // homework object
   const [selectedSub, setSelectedSub]          = useState(null)  // submission if exists
 
-  // Grading state
+  // ── State ──────────────────────────────────────────────────────────────────
   const [positions, setPositions] = useState([])   // array of POS_STATUS values
   const [feedback, setFeedback]   = useState('')
   const [saving, setSaving]       = useState(false)
+  const [generatingPDF, setGeneratingPDF] = useState(false)
+  const [pdfRangeStart, setPdfRangeStart] = useState('')
+  const [pdfRangeEnd, setPdfRangeEnd] = useState('')
   const [lastSaved, setLastSaved] = useState(null)  // timestamp of last successful save
   const [savedCorrId, setSavedCorrId] = useState(null)  // correction id after save
 
@@ -129,11 +143,13 @@ export default function CorrectionInterface() {
     enabled: !!selectedStudent,
   })
   // filter to those assigned to this student
-  const studentHomework = (hwData || []).filter((hw) =>
-    hw.assignedStudents?.some((s) =>
-      (s._id || s) === selectedStudent?._id || (s._id || s)?.toString() === selectedStudent?._id
+  const studentHomework = (hwData || [])
+    .filter((hw) =>
+      hw.assignedStudents?.some((s) =>
+        (s._id || s) === selectedStudent?._id || (s._id || s)?.toString() === selectedStudent?._id
+      )
     )
-  )
+    .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
 
   // Submissions for selected student across all homework
   const { data: studentSubs, isLoading: loadingSubs } = useQuery({
@@ -245,11 +261,87 @@ export default function CorrectionInterface() {
   const calcScore    = totalPos > 0 ? Math.round((correctCount / totalPos) * 100) : 0
   const grade        = calcScore >= 90 ? 'A' : calcScore >= 80 ? 'B' : calcScore >= 70 ? 'C' : calcScore >= 60 ? 'D' : 'F'
 
+  const baseOffset = getHomeworkOffset(selectedHw)
+
   const moveAnnotations = positions.map((p, i) => ({
-    move: `Position ${i + 1}`,
+    move: `Position ${i + 1 + baseOffset}`,
     quality: p === POS_STATUS.CORRECT ? 'excellent' : p === POS_STATUS.WRONG ? 'mistake' : p === POS_STATUS.REVIEW ? 'inaccuracy' : 'unchecked',
     comment: p === POS_STATUS.CORRECT ? 'Correct' : p === POS_STATUS.WRONG ? 'Wrong' : p === POS_STATUS.REVIEW ? 'Needs review' : 'Not checked',
   }))
+
+  // ── Download PDF Report ────────────────────────────────────────────────────
+  const handleDownloadPDF = async () => {
+    if (!selectedStudent || !selectedHw) {
+      toast.error('Select a student and homework first')
+      return
+    }
+    if (positions.every((p) => p === POS_STATUS.UNCHECKED)) {
+      toast.error('Mark at least one position before downloading the report')
+      return
+    }
+
+    let startIdx = 0
+    let endIdx = positions.length - 1
+    const firstValidPos = 1 + baseOffset
+    const lastValidPos = positions.length + baseOffset
+
+    if (pdfRangeStart) {
+      const userStart = parseInt(pdfRangeStart)
+      if (userStart < firstValidPos) {
+        toast.error(`Start position cannot be less than ${firstValidPos}`)
+        return
+      }
+      startIdx = userStart - 1 - baseOffset
+    }
+
+    if (pdfRangeEnd) {
+      const userEnd = parseInt(pdfRangeEnd)
+      if (userEnd > lastValidPos) {
+        toast.error(`End position cannot exceed ${lastValidPos}`)
+        return
+      }
+      endIdx = userEnd - 1 - baseOffset
+    }
+
+    if (startIdx > endIdx) {
+      toast.error('Start position cannot be greater than end position')
+      return
+    }
+
+    const slicedPositions = positions.slice(startIdx, endIdx + 1)
+    const rangeCorrect = slicedPositions.filter((p) => p === POS_STATUS.CORRECT).length
+    const rangeTotal = slicedPositions.length
+    const rangeScore = rangeTotal > 0 ? Math.round((rangeCorrect / rangeTotal) * 100) : 0
+    const rangeGrade = rangeScore >= 90 ? 'A' : rangeScore >= 80 ? 'B' : rangeScore >= 70 ? 'C' : rangeScore >= 60 ? 'D' : 'F'
+
+    setGeneratingPDF(true)
+    try {
+      // Fetch correctedBy (current admin) from API if needed
+      let correctedBy = null
+      try {
+        const me = await api.get('/auth/me')
+        correctedBy = me.data.data
+      } catch {}
+
+      generateCorrectionPDF({
+        student:     selectedStudent,
+        homework:    selectedHw,
+        positions:   slicedPositions,
+        feedback,
+        score:       rangeScore,
+        grade:       rangeGrade,
+        correctedAt: lastSaved || new Date(),
+        correctedBy,
+        positionOffset: baseOffset + startIdx
+      })
+      toast.success('PDF report downloaded!')
+    } catch (err) {
+      console.error(err)
+      toast.error('Failed to generate PDF')
+    } finally {
+      setGeneratingPDF(false)
+    }
+  }
 
   const handleSave = async () => {
     if (!selectedStudent || !selectedHw) {
@@ -432,6 +524,9 @@ export default function CorrectionInterface() {
                       <Badge variant={statusVariant} size="sm">
                         {isCorrected ? '✓ Corrected' : effectiveStatus}
                       </Badge>
+                      <span className={styles.hwPositions} style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                        {hw.createdAt ? format(new Date(hw.createdAt), 'PP p') : ''}
+                      </span>
                       <span className={styles.hwPositions}>{posCount} positions</span>
                     </div>
                     {isCorrected && (
@@ -524,9 +619,9 @@ export default function CorrectionInterface() {
                         borderColor: statusColor(status),
                         color: statusColor(status),
                       }}
-                      title={`Position ${i + 1}: click to change status`}
+                      title={`Position ${i + 1 + baseOffset}: click to change status`}
                     >
-                      <div className={styles.posCellNum}>{i + 1}</div>
+                      <div className={styles.posCellNum}>{i + 1 + baseOffset}</div>
                       <div className={styles.posCellIcon}>
                         {statusIcon(status, 18)}
                       </div>
@@ -577,9 +672,9 @@ export default function CorrectionInterface() {
                       key={i}
                       className={styles.previewDot}
                       style={{ background: statusColor(s), opacity: s === POS_STATUS.UNCHECKED ? 0.25 : 1 }}
-                      title={`Position ${i + 1}: ${s}`}
+                      title={`Position ${i + 1 + baseOffset}: ${s}`}
                     >
-                      {i + 1}
+                      {i + 1 + baseOffset}
                     </div>
                   ))}
                 </div>
@@ -617,6 +712,47 @@ export default function CorrectionInterface() {
                   ? `Update ${selectedStudent?.firstName || selectedStudent?.username}'s Correction — ${calcScore}% (Grade ${grade})`
                   : `Save Correction — ${calcScore}% (Grade ${grade}) → ${selectedStudent?.firstName || selectedStudent?.username}`
                 }
+              </Button>
+
+              {/* PDF Range Selector */}
+              {positions.length > 0 && (
+                <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+                    <label style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px' }}>Report Start Position</label>
+                    <input
+                      type="number"
+                      min="1"
+                      style={{ padding: '8px', fontSize: '13px', borderRadius: '4px', border: '1px solid var(--border)', background: 'var(--bg-input)', color: 'var(--text-primary)' }}
+                      placeholder={String(1 + baseOffset)}
+                      value={pdfRangeStart}
+                      onChange={e => setPdfRangeStart(e.target.value)}
+                    />
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+                    <label style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px' }}>Report End Position</label>
+                    <input
+                      type="number"
+                      min="1"
+                      style={{ padding: '8px', fontSize: '13px', borderRadius: '4px', border: '1px solid var(--border)', background: 'var(--bg-input)', color: 'var(--text-primary)' }}
+                      placeholder={String(positions.length + baseOffset)}
+                      value={pdfRangeEnd}
+                      onChange={e => setPdfRangeEnd(e.target.value)}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Download PDF button */}
+              <Button
+                loading={generatingPDF}
+                icon={<Download size={15} />}
+                variant="secondary"
+                onClick={handleDownloadPDF}
+                fullWidth
+                disabled={positions.every((p) => p === POS_STATUS.UNCHECKED)}
+              >
+                Download PDF Report
+                {selectedStudent && ` — ${selectedStudent.firstName || selectedStudent.username}`}
               </Button>
 
               {lastSaved && (

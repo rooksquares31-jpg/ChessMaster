@@ -40,7 +40,6 @@ export function StudentForm({ initial = {}, onSubmit, loading, error }) {
   const validate = () => {
     const errs = {}
     if (!form.firstName.trim()) errs.firstName = 'First name is required'
-    if (!form.lastName.trim())  errs.lastName  = 'Last name is required'
     if (!form.username.trim())  errs.username  = 'Username is required'
     if (form.username.length < 3) errs.username = 'Username must be at least 3 characters'
     if (!/^[a-zA-Z0-9_]+$/.test(form.username)) errs.username = 'Letters, numbers and _ only'
@@ -71,8 +70,8 @@ export function StudentForm({ initial = {}, onSubmit, loading, error }) {
       <div className={styles.formGrid}>
         <Input label="First Name" placeholder="Alice" value={form.firstName}
           onChange={set('firstName')} error={fieldErrors.firstName} required />
-        <Input label="Last Name"  placeholder="Smith"  value={form.lastName}
-          onChange={set('lastName')}  error={fieldErrors.lastName}  required />
+        <Input label="Last Name" placeholder="Smith" value={form.lastName}
+          onChange={set('lastName')}  error={fieldErrors.lastName} />
       </div>
 
       <div className={styles.formGrid}>

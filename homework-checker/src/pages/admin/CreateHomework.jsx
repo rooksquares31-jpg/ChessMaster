@@ -48,7 +48,8 @@ export default function CreateHomework() {
 
   // Simple mode states
   const [simpleTitle, setSimpleTitle] = useState('')
-  const [simplePositions, setSimplePositions] = useState('10')
+  const [simpleStartPos, setSimpleStartPos] = useState('1')
+  const [simpleEndPos, setSimpleEndPos] = useState('10')
   const [simpleAssigned, setSimpleAssigned] = useState([])  // students assigned in simple mode
   const [simpleSearch, setSimpleSearch] = useState('')
 
@@ -119,11 +120,17 @@ export default function CreateHomework() {
       toast.error('Title is required')
       return
     }
-    const count = parseInt(simplePositions, 10)
-    if (isNaN(count) || count < 1) {
-      toast.error('Number of positions must be at least 1')
+    const start = parseInt(simpleStartPos, 10)
+    const end = parseInt(simpleEndPos, 10)
+    if (isNaN(start) || start < 1) {
+      toast.error('Starting position must be at least 1')
       return
     }
+    if (isNaN(end) || end < start) {
+      toast.error('Ending position must be valid and >= starting position')
+      return
+    }
+    const count = end - start + 1
 
     setSaving(true)
     try {
@@ -135,12 +142,12 @@ export default function CreateHomework() {
 
       const hwPayload = {
         title: simpleTitle,
-        description: 'Simple homework assignment',
+        description: `Simple homework assignment (Positions ${start}-${end})`,
         category: 'tactics',
         difficulty: 'intermediate',
         dueDate: dueDate.toISOString(),
         instructions: simplePositionsArray.map((p, i) =>
-          `Position ${i + 1}: ${p.explanation || ''} [Correct: ${p.correctMove}]`
+          `Position ${i + start}: ${p.explanation || ''} [Correct: ${p.correctMove}]`
         ).join('\n'),
         fenPosition: simplePositionsArray[0]?.fen || undefined,
         positions: simplePositionsArray,
@@ -254,17 +261,32 @@ export default function CreateHomework() {
               required
             />
 
-            <Input
-              label="Number of Positions"
-              type="number"
-              min="1"
-              max="50"
-              placeholder="10"
-              value={simplePositions}
-              onChange={(e) => setSimplePositions(e.target.value)}
-              required
-              hint="Enter the number of chess positions for this assignment (1-50)"
-            />
+            <div style={{ display: 'flex', gap: '16px' }}>
+              <div style={{ flex: 1 }}>
+                <Input
+                  label="Starting Position"
+                  type="number"
+                  min="1"
+                  placeholder="1"
+                  value={simpleStartPos}
+                  onChange={(e) => setSimpleStartPos(e.target.value)}
+                  required
+                  hint="First position number"
+                />
+              </div>
+              <div style={{ flex: 1 }}>
+                <Input
+                  label="Ending Position"
+                  type="number"
+                  min="1"
+                  placeholder="10"
+                  value={simpleEndPos}
+                  onChange={(e) => setSimpleEndPos(e.target.value)}
+                  required
+                  hint="Last position number"
+                />
+              </div>
+            </div>
 
             {/* ── Assign Students ── */}
             <div className={styles.simpleAssignSection}>

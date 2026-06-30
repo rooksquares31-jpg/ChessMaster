@@ -12,6 +12,16 @@ import styles from './StudentHomework.module.css'
 
 const STATUS = { UNANSWERED: 'unanswered', CORRECT: 'correct', WRONG: 'wrong', REVIEW: 'review' }
 
+// Parse the starting position offset from the description (e.g. "Positions 51-100")
+function getHomeworkOffset(hw) {
+  if (!hw || !hw.description) return 0
+  const match = hw.description.match(/Positions (\d+)-\d+/)
+  if (match && match[1]) {
+    return parseInt(match[1], 10) - 1
+  }
+  return 0
+}
+
 export default function SolveHomework() {
   const { id } = useParams()
   const navigate = useNavigate()
@@ -48,6 +58,7 @@ export default function SolveHomework() {
   const total = positions.length || 1
   const completed = Object.keys(answers).length
   const correctCount = Object.values(answers).filter((a) => a.status === STATUS.CORRECT).length
+  const baseOffset = getHomeworkOffset(hw)
 
   const checkMove = () => {
     if (!moveInput.trim()) return
@@ -80,7 +91,7 @@ export default function SolveHomework() {
     try {
       const moveSeq = Object.values(answers).map((a) => a.move)
       const solution = Object.entries(answers)
-        .map(([i, a]) => `Position ${parseInt(i) + 1}: ${a.move} (${a.status})`)
+        .map(([i, a]) => `Position ${parseInt(i) + 1 + baseOffset}: ${a.move} (${a.status})`)
         .join('\n')
       await api.post('/submissions', {
         homeworkId: id,
@@ -141,7 +152,7 @@ export default function SolveHomework() {
         {/* Board */}
         <div className={styles.boardSection}>
           <div className={styles.questionCard}>
-            <div className={styles.questionTitle}>Position {current + 1} of {total}</div>
+            <div className={styles.questionTitle}>Position {current + 1 + baseOffset}</div>
             <div className={styles.questionText}>
               {hw.category === 'mate-in-one' ? 'Find the checkmate in one move.' :
                hw.category === 'mate-in-two' ? 'Find the checkmate in two moves.' :
@@ -173,7 +184,7 @@ export default function SolveHomework() {
                 <button key={i} className={btnClass(i)} onClick={() => setCurrent(i)}>
                   {posStatus(i) === STATUS.CORRECT ? '✓' :
                    posStatus(i) === STATUS.WRONG ? '✗' :
-                   posStatus(i) === STATUS.REVIEW ? '?' : i + 1}
+                   posStatus(i) === STATUS.REVIEW ? '?' : i + 1 + baseOffset}
                 </button>
               ))}
             </div>

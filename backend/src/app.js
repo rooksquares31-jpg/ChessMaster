@@ -15,6 +15,8 @@ const submissionRoutes = require('./routes/submissionRoutes');
 const correctionRoutes = require('./routes/correctionRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
 
+const classroomRoutes = require('./routes/classroomRoutes');
+
 const app = express();
 
 // ── Security headers ──────────────────────────────────────────────────────────
@@ -53,6 +55,7 @@ app.use('/api/homework', homeworkRoutes);
 app.use('/api/submissions', submissionRoutes);
 app.use('/api/corrections', correctionRoutes);
 app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/classrooms', classroomRoutes);
 
 // ── 404 handler ───────────────────────────────────────────────────────────────
 app.use((_req, res) => {

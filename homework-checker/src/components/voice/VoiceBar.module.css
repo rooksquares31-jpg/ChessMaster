@@ -1,0 +1,259 @@
+/* ── Voice Bar ── */
+.voiceBar {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 20px;
+  background: rgba(17, 17, 24, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+  z-index: 1000;
+  animation: voiceBarSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes voiceBarSlideUp {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* ── Join/Leave button ── */
+.voiceJoinBtn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.voiceJoinBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.joinBtn {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: #fff;
+  box-shadow: 0 2px 12px rgba(34, 197, 94, 0.3);
+}
+.joinBtn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #16a34a, #15803d);
+  box-shadow: 0 4px 20px rgba(34, 197, 94, 0.4);
+  transform: translateY(-1px);
+}
+
+.leaveBtn {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: #fff;
+  box-shadow: 0 2px 12px rgba(239, 68, 68, 0.3);
+}
+.leaveBtn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  box-shadow: 0 4px 20px rgba(239, 68, 68, 0.4);
+  transform: translateY(-1px);
+}
+
+/* ── Mute toggle ── */
+.muteBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+  color: #e2e8f0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.muteBtn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+}
+
+.muteBtnActive {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #ef4444;
+}
+.muteBtnActive:hover {
+  background: rgba(239, 68, 68, 0.25);
+  border-color: rgba(239, 68, 68, 0.6);
+}
+
+/* Speaking pulse ring on the mute button when unmuted */
+.muteBtnSpeaking {
+  animation: speakingPulse 1.5s ease-in-out infinite;
+}
+.muteBtnSpeaking::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 2px solid rgba(34, 197, 94, 0.5);
+  animation: speakingRing 1.5s ease-in-out infinite;
+}
+
+@keyframes speakingPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.3); }
+  50% { box-shadow: 0 0 12px 4px rgba(34, 197, 94, 0.2); }
+}
+
+@keyframes speakingRing {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 0.2; transform: scale(1.15); }
+}
+
+/* ── Divider line ── */
+.divider {
+  width: 1px;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
+}
+
+/* ── Voice status info ── */
+.voiceInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.voiceStatusDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  animation: statusPulse 2s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+@keyframes statusPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.voiceStatusText {
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.6);
+  white-space: nowrap;
+}
+
+.peersCount {
+  color: #22c55e;
+  font-weight: 700;
+}
+
+/* ── Speaking avatars row ── */
+.speakingAvatars {
+  display: flex;
+  align-items: center;
+  gap: -4px;
+}
+
+.speakingAvatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, #4f8ef7, #a855f7);
+  border: 2px solid rgba(17, 17, 24, 0.85);
+  margin-left: -6px;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.speakingAvatar:first-child {
+  margin-left: 0;
+}
+
+.speakingAvatarSpeaking {
+  border-color: #22c55e;
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.5);
+  animation: avatarGlow 1s ease-in-out infinite;
+}
+
+@keyframes avatarGlow {
+  0%, 100% { box-shadow: 0 0 4px rgba(34, 197, 94, 0.3); }
+  50% { box-shadow: 0 0 12px rgba(34, 197, 94, 0.6); }
+}
+
+/* ── Joining spinner ── */
+.spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Idle bar (not in voice) ── */
+.voiceBarIdle {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  animation: voiceBarSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ── Participant avatar speaking glow (used in LiveClassroom) ── */
+.avatarSpeaking {
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.5) !important;
+  animation: avatarSpeakGlow 1.2s ease-in-out infinite;
+}
+
+@keyframes avatarSpeakGlow {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.3); }
+  50% { box-shadow: 0 0 0 5px rgba(34, 197, 94, 0.6), 0 0 16px rgba(34, 197, 94, 0.2); }
+}
+
+/* ── Voice badge in participant list ── */
+.voiceBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: rgba(34, 197, 94, 0.1);
+  color: #22c55e;
+  border: 1px solid rgba(34, 197, 94, 0.2);
+}

@@ -1,23 +1,25 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import {
   LayoutDashboard, BookOpen, Users, CheckSquare,
-  BarChart2, LogOut, ChevronRight, Crown, GraduationCap
+  BarChart2, LogOut, ChevronRight, Crown, GraduationCap, Video,
 } from 'lucide-react'
 import { useAuthStore } from '../../store/authStore'
 import styles from './Sidebar.module.css'
 
 const adminNav = [
-  { to: '/admin', icon: <LayoutDashboard size={18} />, label: 'Dashboard' },
-  { to: '/admin/homework', icon: <BookOpen size={18} />, label: 'Homework' },
-  { to: '/admin/students', icon: <Users size={18} />, label: 'Students' },
-  { to: '/admin/corrections', icon: <CheckSquare size={18} />, label: 'Corrections' },
-  { to: '/admin/analytics', icon: <BarChart2 size={18} />, label: 'Analytics' },
+  { to: '/admin',             icon: <LayoutDashboard size={18} />, label: 'Dashboard' },
+  { to: '/admin/homework',    icon: <BookOpen size={18} />,        label: 'Homework' },
+  { to: '/admin/classrooms',  icon: <Video size={18} />,           label: 'Classrooms' },
+  { to: '/admin/students',    icon: <Users size={18} />,           label: 'Students' },
+  { to: '/admin/corrections', icon: <CheckSquare size={18} />,     label: 'Corrections' },
+  { to: '/admin/analytics',   icon: <BarChart2 size={18} />,       label: 'Analytics' },
 ]
 
 const studentNav = [
-  { to: '/student', icon: <LayoutDashboard size={18} />, label: 'Dashboard' },
-  { to: '/student/homework', icon: <BookOpen size={18} />, label: 'My Homework' },
-  { to: '/student/results', icon: <BarChart2 size={18} />, label: 'My Results' },
+  { to: '/student',             icon: <LayoutDashboard size={18} />, label: 'Dashboard' },
+  { to: '/student/homework',    icon: <BookOpen size={18} />,        label: 'My Homework' },
+  { to: '/student/classrooms',  icon: <Video size={18} />,           label: 'Classrooms' },
+  { to: '/student/results',     icon: <BarChart2 size={18} />,       label: 'My Results' },
 ]
 
 export default function Sidebar() {

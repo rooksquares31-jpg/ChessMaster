@@ -15,6 +15,7 @@ import CreateHomework from './pages/admin/CreateHomework'
 import AdminStudents from './pages/admin/AdminStudents'
 import AdminAddStudents from './pages/admin/AdminAddStudents'
 import CorrectionInterface from './pages/admin/CorrectionInterface'
+import AdminClassrooms from './pages/admin/AdminClassrooms'
 
 // Student pages
 import StudentDashboard from './pages/student/StudentDashboard'
@@ -22,6 +23,10 @@ import StudentHomeworkList from './pages/student/StudentHomeworkList'
 import StudentResults from './pages/student/StudentResults'
 import SolveHomework from './pages/student/SolveHomework'
 import HomeworkResult from './pages/student/HomeworkResult'
+import StudentClassrooms from './pages/student/StudentClassrooms'
+
+// Classroom (shared)
+import LiveClassroom from './pages/classroom/LiveClassroom'
 
 // Guards
 function RequireAuth({ children, role }) {
@@ -55,6 +60,8 @@ export default function App() {
         <Route path="students" element={<AdminStudents />} />
         <Route path="corrections" element={<CorrectionInterface />} />
         <Route path="analytics" element={<AdminDashboard />} />
+        <Route path="classrooms" element={<AdminClassrooms />} />
+        <Route path="classroom/:id" element={<LiveClassroom />} />
       </Route>
 
       {/* Student routes */}
@@ -67,6 +74,8 @@ export default function App() {
         <Route path="homework/:id/result" element={<HomeworkResult />} />
         <Route path="results" element={<StudentResults />} />
         <Route path="progress" element={<StudentResults />} />
+        <Route path="classrooms" element={<StudentClassrooms />} />
+        <Route path="classroom/:id" element={<LiveClassroom />} />
       </Route>
 
       {/* Default redirect */}

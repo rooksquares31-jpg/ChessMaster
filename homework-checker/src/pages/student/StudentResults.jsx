@@ -34,6 +34,16 @@ function getEffectiveStatus(sub, corr, hw) {
   return 'assigned'
 }
 
+// Parse the starting position offset from the description (e.g. "Positions 51-100")
+function getHomeworkOffset(hw) {
+  if (!hw || !hw.description) return 0
+  const match = hw.description.match(/Positions (\d+)-\d+/)
+  if (match && match[1]) {
+    return parseInt(match[1], 10) - 1
+  }
+  return 0
+}
+
 const FILTERS = [
   { key: 'all',       label: 'All Homework' },
   { key: 'corrected', label: 'Corrected' },
@@ -89,11 +99,13 @@ export default function StudentResults() {
     assigned:  enriched.filter((e) => e.effectiveStatus === 'assigned' || e.effectiveStatus === 'overdue').length,
   }
 
-  const filtered = enriched.filter((e) => {
-    if (filter === 'all')      return true
-    if (filter === 'assigned') return e.effectiveStatus === 'assigned' || e.effectiveStatus === 'overdue'
-    return e.effectiveStatus === filter
-  })
+  const filtered = enriched
+    .filter((e) => {
+      if (filter === 'all')      return true
+      if (filter === 'assigned') return e.effectiveStatus === 'assigned' || e.effectiveStatus === 'overdue'
+      return e.effectiveStatus === filter
+    })
+    .sort((a, b) => new Date(a.hw.createdAt) - new Date(b.hw.createdAt))
 
   const totalScore = enriched
     .filter((e) => e.corr)
@@ -205,6 +217,7 @@ export default function StudentResults() {
             const overdue     = effectiveStatus === 'overdue'
             const pct         = corr?.score ?? null
             const grade       = corr?.grade ?? null
+            const baseOffset  = getHomeworkOffset(hw)
 
             return (
               <div
@@ -251,9 +264,13 @@ export default function StudentResults() {
 
                   {/* Meta row */}
                   <div className={styles.metaRow}>
+                    <div className={styles.metaChip} style={{ flexShrink: 0, color: 'var(--text-muted)' }}>
+                      <Clock size={13} />
+                      <span>Assigned: {hw.createdAt ? format(new Date(hw.createdAt), 'PP p') : '—'}</span>
+                    </div>
                     <div className={[styles.dateChip, overdue ? styles.dateOverdue : ''].join(' ')}>
                       {overdue ? <Award size={13} /> : <Calendar size={13} />}
-                      <span>{overdue ? 'Overdue · ' : ''}{format(new Date(hw.dueDate), 'PPP')}</span>
+                      <span>{overdue ? 'Overdue · ' : 'Due: '}{format(new Date(hw.dueDate), 'PPP')}</span>
                     </div>
                     {hw.maxScore && (
                       <div className={styles.metaChip}>
@@ -307,9 +324,9 @@ export default function StudentResults() {
                                 status === 'review'   ? styles.miniReview   :
                                                         styles.miniUnchecked,
                               ].join(' ')}
-                              title={`Position ${i + 1}: ${status}`}
+                              title={`Position ${i + 1 + baseOffset}: ${status}`}
                             >
-                              <span className={styles.miniNum}>{i + 1}</span>
+                              <span className={styles.miniNum}>{i + 1 + baseOffset}</span>
                               <span className={styles.miniIcon}>
                                 {status === 'correct' ? '✅' :
                                  status === 'wrong'   ? '❌' :

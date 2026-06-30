@@ -1,0 +1,106 @@
+/* ── Page ── */
+.page { display: flex; flex-direction: column; gap: 20px; max-width: 960px; }
+.header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.title { font-size: 26px; font-weight: 800; color: var(--text-primary); letter-spacing: -0.02em; }
+.subtitle { font-size: 14px; color: var(--text-secondary); margin-top: 4px; }
+
+/* ── Stats ── */
+.statsRow { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
+.statCard { display: flex; align-items: center; gap: 14px; padding: 18px 20px; }
+.statIcon { width: 40px; height: 40px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.statNum { font-size: 24px; font-weight: 800; color: var(--text-primary); line-height: 1; }
+.statLbl { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+
+/* ── States ── */
+.loading { display: flex; align-items: center; gap: 10px; padding: 40px; color: var(--text-muted); font-size: 14px; }
+.spinner { width: 18px; height: 18px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.empty { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 60px; text-align: center; }
+.emptyIcon { color: var(--text-muted); opacity: 0.25; }
+.empty h3 { font-size: 18px; font-weight: 700; color: var(--text-primary); }
+.empty p { font-size: 14px; color: var(--text-secondary); max-width: 380px; }
+
+/* ── Classroom card ── */
+.classCard { padding: 20px 24px; transition: border-color 0.2s, box-shadow 0.2s; }
+.classCardLive { border-color: rgba(34,197,94,0.5); box-shadow: 0 0 20px rgba(34,197,94,0.08); }
+.liveIndicator { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 800; color: var(--green); letter-spacing: 0.08em; margin-bottom: 12px; }
+.livePulse { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 3px rgba(34,197,94,0.25); animation: pulse 1.5s ease infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+.classTop { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+.classLeft { flex: 1; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.classTitleRow { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.classTitle { font-size: 17px; font-weight: 700; color: var(--text-primary); }
+.classDesc { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+.classMeta { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.codeChip { display: flex; align-items: center; gap: 8px; background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius); padding: 7px 14px; }
+.codeLabel { font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; }
+.codeValue { font-size: 20px; font-weight: 900; color: var(--accent); font-family: 'JetBrains Mono', monospace; letter-spacing: 0.14em; }
+.copyBtn { background: none; border: none; color: var(--text-muted); cursor: pointer; display: flex; padding: 2px; border-radius: 4px; transition: color var(--transition); }
+.copyBtn:hover { color: var(--accent); }
+.metaItem { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text-muted); }
+
+.classActions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.shareBtn { background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text-secondary); cursor: pointer; padding: 8px 10px; display: flex; transition: all var(--transition); }
+.shareBtn:hover { border-color: var(--accent); color: var(--accent); }
+.deleteBtn { background: none; border: 1px solid var(--border); border-radius: var(--radius); color: var(--text-muted); cursor: pointer; padding: 8px 10px; display: flex; transition: all var(--transition); }
+.deleteBtn:hover { border-color: var(--red); color: var(--red); background: var(--red-dim); }
+.deleteBtn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ── Wizard modal ── */
+.wizardSteps { display: flex; align-items: center; gap: 0; margin-bottom: 24px; }
+.wStep { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--text-muted); transition: color var(--transition); }
+.wStepActive { color: var(--accent); }
+.wStepNum { width: 26px; height: 26px; border-radius: 50%; border: 2px solid currentColor; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+.wLine { flex: 1; height: 2px; background: var(--border); margin: 0 12px; }
+
+.formErr { background: var(--red-dim); border: 1px solid rgba(239,68,68,0.3); border-radius: var(--radius); padding: 10px 14px; font-size: 13px; color: var(--red); margin-bottom: 12px; }
+.stepBody { display: flex; flex-direction: column; gap: 16px; }
+.notesWrap { display: flex; flex-direction: column; gap: 6px; }
+.notesLbl { font-size: 13px; font-weight: 500; color: var(--text-secondary); }
+.notesArea { width: 100%; background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text-primary); font-family: inherit; font-size: 13px; padding: 10px 12px; resize: vertical; outline: none; transition: border-color var(--transition); }
+.notesArea:focus { border-color: var(--border-focus); }
+.notesArea::placeholder { color: var(--text-muted); }
+.stepNav { display: flex; align-items: center; justify-content: flex-end; gap: 10px; padding-top: 4px; }
+
+/* ── Student Picker ── */
+.picker { display: flex; flex-direction: column; gap: 12px; }
+.pickerSearch { position: relative; }
+.pickerSearchIcon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); pointer-events: none; }
+.pickerInput { width: 100%; background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text-primary); font-family: inherit; font-size: 14px; padding: 10px 36px 10px 38px; outline: none; transition: border-color var(--transition); }
+.pickerInput:focus { border-color: var(--border-focus); }
+.pickerInput::placeholder { color: var(--text-muted); }
+.pickerClear { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 2px; display: flex; transition: color var(--transition); }
+.pickerClear:hover { color: var(--text-primary); }
+
+.pickerBulk { display: flex; gap: 8px; }
+.bulkBtn { background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text-secondary); font-size: 12px; font-weight: 500; padding: 5px 12px; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all var(--transition); font-family: inherit; }
+.bulkBtn:hover { border-color: var(--accent); color: var(--accent); }
+
+.pickerLayout { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 600px) { .pickerLayout { grid-template-columns: 1fr; } }
+
+.pickerCol { background: var(--bg-input); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+.pickerColTitle { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; background: var(--bg-secondary); border-bottom: 1px solid var(--border); }
+.pickerCount { background: var(--bg-card); color: var(--text-secondary); border-radius: 999px; font-size: 11px; padding: 1px 7px; font-weight: 700; }
+.pickerList { max-height: 220px; overflow-y: auto; }
+.pickerEmpty { padding: 24px; text-align: center; font-size: 13px; color: var(--text-muted); }
+
+.pickerRow { width: 100%; display: flex; align-items: center; gap: 10px; padding: 9px 14px; background: none; border: none; border-bottom: 1px solid var(--border); cursor: pointer; text-align: left; transition: background var(--transition); font-family: inherit; }
+.pickerRow:last-child { border-bottom: none; }
+.pickerRow:hover { background: var(--bg-card-hover); }
+.pickerRowSel { background: rgba(34,197,94,0.07); }
+
+.selectedRow { display: flex; align-items: center; gap: 10px; padding: 9px 14px; border-bottom: 1px solid var(--border); }
+.selectedRow:last-child { border-bottom: none; }
+
+.pickerAvatar { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0; }
+.pickerInfo { flex: 1; min-width: 0; }
+.pickerName { font-size: 13px; font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pickerEmail { font-size: 11px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pickerToggle { flex-shrink: 0; }
+.toggleAdd { color: var(--text-muted); display: flex; }
+.toggleAdded { color: var(--green); display: flex; }
+.removeBtn { background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 4px; display: flex; border-radius: 4px; transition: color var(--transition); flex-shrink: 0; }
+.removeBtn:hover { color: var(--red); }
+.pickerNote { font-size: 12px; color: var(--text-muted); background: var(--accent-dim); border: 1px solid rgba(79,142,247,0.2); border-radius: var(--radius); padding: 10px 14px; }

@@ -14,6 +14,16 @@ import Button from '../../components/ui/Button'
 import ProgressBar from '../../components/ui/ProgressBar'
 import styles from './HomeworkResult.module.css'
 
+// Parse the starting position offset from the description (e.g. "Positions 51-100")
+function getHomeworkOffset(hw) {
+  if (!hw || !hw.description) return 0
+  const match = hw.description.match(/Positions (\d+)-\d+/)
+  if (match && match[1]) {
+    return parseInt(match[1], 10) - 1
+  }
+  return 0
+}
+
 export default function HomeworkResult() {
   const { id } = useParams()
   const navigate = useNavigate()
@@ -42,6 +52,7 @@ export default function HomeworkResult() {
   const submission = submissions?.[0]
   const correction = submission?.correction
   const isLoading = !stateHw && loadingHw
+  const baseOffset = getHomeworkOffset(hw)
 
   // Determine score data
   // Priority: correction score (coach reviewed) > state answers (immediate solve) > submission data
@@ -248,9 +259,9 @@ export default function HomeworkResult() {
                       status === 'wrong' ? styles.posWrong :
                       status === 'review' ? styles.posReview : styles.posUnanswered
                     ].join(' ')}
-                    title={`Position ${i + 1}: ${ans?.move || 'Not answered'}`}
+                    title={`Position ${i + 1 + baseOffset}: ${ans?.move || 'Not answered'}`}
                   >
-                    <div className={styles.posBoxNum}>{i + 1}</div>
+                    <div className={styles.posBoxNum}>{i + 1 + baseOffset}</div>
                     <div className={styles.posBoxIcon}>
                       {status === 'correct' ? '✅' :
                        status === 'wrong' ? '❌' :
@@ -335,9 +346,9 @@ export default function HomeworkResult() {
                       status === 'review'    ? styles.coachCellReview :
                                               styles.coachCellUnchecked,
                     ].join(' ')}
-                    title={`Position ${i + 1}: ${status}`}
+                    title={`Position ${i + 1 + baseOffset}: ${status}`}
                   >
-                    <div className={styles.coachCellNum}>{i + 1}</div>
+                    <div className={styles.coachCellNum}>{i + 1 + baseOffset}</div>
                     <div className={styles.coachCellIcon}>
                       {status === 'correct' ? '✅' :
                        status === 'wrong'   ? '❌' :

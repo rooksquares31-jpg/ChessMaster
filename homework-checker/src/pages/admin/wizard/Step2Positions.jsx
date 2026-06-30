@@ -28,12 +28,11 @@ export default function Step2Positions({ count, setCount }) {
           <input
             type="number"
             min={1}
-            max={100}
             className={styles.customInput}
             value={count}
-            onChange={(e) => setCount(Math.max(1, Math.min(100, parseInt(e.target.value) || 1)))}
+            onChange={(e) => setCount(Math.max(1, parseInt(e.target.value) || 1))}
           />
-          <span className={styles.customSub}>positions (max 100)</span>
+          <span className={styles.customSub}>positions</span>
         </div>
       </div>
 
