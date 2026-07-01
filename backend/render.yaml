@@ -1,0 +1,40 @@
+services:
+  - type: web
+    name: chess-homework-backend
+    env: node
+    region: singapore          # Closest to India — change to oregon/frankfurt if needed
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+      # ─── All secrets below are set manually in the Render dashboard ───────────
+      # Do NOT hardcode real values here — this file is committed to git
+      - key: MONGO_URI
+        sync: false            # "sync: false" = Render asks you to enter it in the dashboard
+      - key: JWT_SECRET
+        sync: false
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: JWT_REFRESH_SECRET
+        sync: false
+      - key: JWT_REFRESH_EXPIRES_IN
+        value: 30d
+      - key: BCRYPT_ROUNDS
+        value: 12
+      - key: RATE_LIMIT_WINDOW_MS
+        value: 900000
+      - key: RATE_LIMIT_MAX
+        value: 100
+      - key: AUTH_RATE_LIMIT_MAX
+        value: 10
+      - key: CLIENT_URL
+        sync: false            # Set to your Vercel frontend URL after deploying frontend
+      - key: MAX_FILE_SIZE_MB
+        value: 10
+      - key: UPLOAD_DIR
+        value: uploads

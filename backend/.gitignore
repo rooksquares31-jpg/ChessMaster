@@ -1,2 +1,7 @@
 node_modules/
 .env
+# Track the folder itself but not uploaded files
+uploads/*
+!uploads/.gitkeep
+*.log
+dist/
