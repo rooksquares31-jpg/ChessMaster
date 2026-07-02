@@ -19,10 +19,19 @@ const User        = require('../models/User');
  *   chat:message       — in-room chat message
  *   error              — something went wrong
  */
+const allowedOrigins = process.env.CLIENT_URL
+  ? process.env.CLIENT_URL.split(',').map((url) => url.trim()).filter(Boolean)
+  : ['http://localhost:5173'];
+
 const initSocket = (httpServer) => {
   const io = new Server(httpServer, {
     cors: {
-      origin: process.env.CLIENT_URL || 'http://localhost:5173',
+      origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(origin)) {
+          return callback(null, true);
+        }
+        return callback(new Error('Not allowed by CORS'));
+      },
       credentials: true,
     },
   });
