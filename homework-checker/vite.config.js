@@ -10,12 +10,24 @@ export default defineConfig({
     rollupOptions: {
       output: {
         // Split big libraries into separate chunks for better caching
-        manualChunks: {
-          react:    ['react', 'react-dom', 'react-router-dom'],
-          chess:    ['chess.js', 'react-chessboard'],
-          charts:   ['recharts'],
-          query:    ['@tanstack/react-query'],
-          socket:   ['socket.io-client'],
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router-dom')) {
+              return 'react'
+            }
+            if (id.includes('chess.js') || id.includes('react-chessboard')) {
+              return 'chess'
+            }
+            if (id.includes('recharts')) {
+              return 'charts'
+            }
+            if (id.includes('@tanstack/react-query')) {
+              return 'query'
+            }
+            if (id.includes('socket.io-client')) {
+              return 'socket'
+            }
+          }
         },
       },
     },
