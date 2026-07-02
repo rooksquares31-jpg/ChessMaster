@@ -19,7 +19,7 @@ const classroomRoutes = require('./routes/classroomRoutes');
 
 const app = express();
 
-const allowedOrigins = "https://chess-master-7m1clj3hc-mohantsk381-9850s-projects.vercel.app"
+const allowedOrigins = "https://chess-master-roan.vercel.app"
 
 // ── Security headers ──────────────────────────────────────────────────────────
 app.use(helmet());
