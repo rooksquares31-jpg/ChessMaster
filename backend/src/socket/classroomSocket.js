@@ -23,14 +23,32 @@ const allowedOrigins = process.env.CLIENT_URL
   ? process.env.CLIENT_URL.split(',').map((url) => url.trim()).filter(Boolean)
   : ['http://localhost:5173'];
 
+const parseHostname = (entry) => {
+  try {
+    return new URL(entry).hostname;
+  } catch {
+    return entry.replace(/^https?:\/\//, '').replace(/\/$/, '');
+  }
+};
+
+const allowedHostnames = allowedOrigins.map(parseHostname);
+
 const initSocket = (httpServer) => {
   const io = new Server(httpServer, {
     cors: {
       origin: (origin, callback) => {
-        if (!origin || allowedOrigins.includes(origin)) {
-          return callback(null, true);
+        if (!origin) return callback(null, true);
+        try {
+          const originHostname = new URL(origin).hostname;
+          const allowed =
+            allowedOrigins.includes(origin) ||
+            allowedHostnames.includes(originHostname) ||
+            allowedHostnames.some((h) => originHostname === h || originHostname.endsWith('.' + h));
+          if (allowed) return callback(null, true);
+          return callback(new Error('Not allowed by CORS'));
+        } catch (err) {
+          return callback(new Error('Not allowed by CORS'));
         }
-        return callback(new Error('Not allowed by CORS'));
       },
       credentials: true,
     },

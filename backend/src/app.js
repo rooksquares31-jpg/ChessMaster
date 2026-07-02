@@ -21,6 +21,16 @@ const app = express();
 
 const allowedOrigins = "https://chess-master-roan.vercel.app"
 
+const parseHostname = (entry) => {
+  try {
+    return new URL(entry).hostname;
+  } catch {
+    return entry.replace(/^https?:\/\//, '').replace(/\/$/, '');
+  }
+};
+
+const allowedHostnames = allowedOrigins.map(parseHostname);
+
 // ── Security headers ──────────────────────────────────────────────────────────
 app.use(helmet());
 
@@ -28,10 +38,18 @@ app.use(helmet());
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
-        return callback(null, true);
+      if (!origin) return callback(null, true);
+      try {
+        const originHostname = new URL(origin).hostname;
+        const allowed =
+          allowedOrigins.includes(origin) ||
+          allowedHostnames.includes(originHostname) ||
+          allowedHostnames.some((h) => originHostname === h || originHostname.endsWith('.' + h));
+        if (allowed) return callback(null, true);
+        return callback(new Error('Not allowed by CORS'));
+      } catch (err) {
+        return callback(new Error('Not allowed by CORS'));
       }
-      return callback(new Error('Not allowed by CORS'));
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
